@@ -1,0 +1,13 @@
+.pkgCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; }
+.pkgCard:hover { border-color: var(--brd2); transform: translateY(-3px); }
+.pkgImg { height: 200px; overflow: hidden; position: relative; flex-shrink: 0; }
+.pkgImg img { transition: transform 0.4s; }
+.pkgCard:hover .pkgImg img { transform: scale(1.05); }
+.discBadge { position: absolute; top: 10px; right: 10px; background: var(--coral); color: #fff; padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; }
+.featBadge { position: absolute; top: 10px; left: 10px; background: var(--gold4); color: var(--gold2); border: 1px solid rgba(201,168,76,0.3); padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 600; }
+.pkgBody { padding: 1.25rem; display: flex; flex-direction: column; flex: 1; gap: 0.5rem; }
+.pkgName { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--txt); line-height: 1.25; }
+.pkgDesc { font-size: 0.8rem; color: var(--txt3); line-height: 1.55; flex: 1; }
+.pkgPlaces { display: flex; flex-wrap: wrap; gap: 4px; }
+.includes { display: flex; flex-direction: column; }
+.pkgFooter { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 0.5rem; }
