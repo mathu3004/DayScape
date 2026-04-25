@@ -1,0 +1,20 @@
+.page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.card { background: var(--bg2); border: 1px solid var(--brd2); border-radius: var(--radius-xl); padding: 3rem 2.5rem; max-width: 520px; width: 100%; text-align: center; }
+.iconWrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+.icon { width: 72px; height: 72px; border-radius: 50%; background: var(--teal3); border: 2px solid var(--teal2); color: var(--teal); font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--txt); margin-bottom: 0.5rem; }
+.sub { color: var(--txt2); font-size: 0.95rem; margin-bottom: 1.75rem; }
+.refBox { background: var(--bg3); border: 1px solid var(--gold3); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1.5rem; }
+.refLabel { font-size: 0.72rem; color: var(--txt3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; }
+.refNum { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
+.details { background: var(--bg3); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.75rem; text-align: left; }
+.detailRow { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--txt2); padding: 0.45rem 0; border-bottom: 1px solid var(--brd); }
+.detailRow:last-child { border: none; }
+.detailTotal { font-weight: 700; color: var(--txt); font-size: 0.95rem; }
+.actions { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+.rideSection { margin-bottom: 1.5rem; padding: 1rem; background: var(--bg3); border: 1px solid var(--brd2); border-radius: var(--radius); }
+.rideTitle { font-size: 0.8rem; font-weight: 700; color: var(--txt3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem; }
+.rideBtns { display: flex; gap: 0.75rem; justify-content: center; }
+.rideBtn { flex: 1; padding: 0.55rem 1rem; border-radius: var(--radius); background: var(--bg2); border: 1px solid var(--brd2); color: var(--txt2); font-size: 0.82rem; font-weight: 600; text-decoration: none; text-align: center; transition: border-color 0.2s, color 0.2s; }
+.rideBtn:hover { border-color: var(--gold3); color: var(--gold); }
+.note { font-size: 0.8rem; color: var(--txt4); line-height: 1.6; }
