@@ -1,0 +1,49 @@
+.layout { display: flex; min-height: 100vh; background: var(--bg0); }
+
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--bg1); border-right: 1px solid var(--brd);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+}
+.sidebarHeader { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--brd); }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--txt); }
+.logo em { color: var(--gold); font-style: italic; }
+.logoSub { font-size: 0.7rem; color: var(--txt4); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+
+.nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+.navItem {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 1rem; border-radius: var(--radius);
+  font-size: 0.875rem; color: var(--txt3); font-weight: 500;
+  transition: all 0.15s;
+}
+.navItem:hover { background: var(--bg3); color: var(--txt); }
+.navItem.active { background: var(--gold4); color: var(--gold2); border: 1px solid rgba(201,168,76,0.15); }
+.icon { font-size: 1rem; width: 20px; text-align: center; }
+
+.sidebarFooter { padding: 1rem 0.75rem; border-top: 1px solid var(--brd); }
+.adminInfo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.adminAvatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--gold4); border: 1px solid var(--gold3);
+  color: var(--gold2); font-size: 0.9rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.adminName { font-size: 0.85rem; font-weight: 600; color: var(--txt); }
+.adminRole { font-size: 0.72rem; color: var(--txt4); }
+.logoutBtn {
+  width: 100%; padding: 0.55rem; border-radius: var(--radius);
+  background: transparent; border: 1px solid var(--brd2);
+  color: var(--txt3); font-size: 0.8rem; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.logoutBtn:hover { border-color: var(--coral); color: var(--coral); background: var(--coral2); }
+
+.main { margin-left: 240px; flex: 1; min-height: 100vh; }
+.mainInner { padding: 2rem; max-width: 1100px; }
+
+@media (max-width: 768px) {
+  .sidebar { width: 200px; }
+  .main { margin-left: 200px; }
+}
