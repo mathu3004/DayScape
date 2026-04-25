@@ -1,0 +1,108 @@
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10, 12, 11, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--brd);
+  height: 66px;
+}
+.inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
+  height: 100%; display: flex; align-items: center; gap: 0.5rem;
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.45rem; font-weight: 700;
+  color: var(--txt); white-space: nowrap; margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+.logo em { color: var(--gold); font-style: italic; }
+
+.links { display: flex; align-items: center; gap: 2px; flex: 1; }
+.link {
+  padding: 0.4rem 0.85rem; border-radius: 100px;
+  font-size: 0.865rem; font-weight: 500; color: var(--txt2);
+  transition: color 0.15s, background 0.15s; white-space: nowrap;
+}
+.link:hover { color: var(--txt); background: var(--bg3); }
+.linkActive { color: var(--gold2) !important; background: var(--gold5) !important; }
+
+.actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; flex-shrink: 0; }
+.hideOnMobile { }
+
+/* Cart button */
+.cartBtn {
+  position: relative; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  border-radius: 50%; font-size: 1rem; text-decoration: none;
+  transition: all 0.15s;
+}
+.cartBtn:hover { border-color: var(--gold3); background: var(--gold5); }
+.cartBadge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--gold); color: var(--bg0);
+  font-size: 0.6rem; font-weight: 800;
+  width: 16px; height: 16px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--bg1);
+}
+
+/* User menu */
+.userMenu { position: relative; }
+.avatar {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  border-radius: 100px; padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  cursor: pointer; color: var(--txt2); font-size: 0.84rem; font-weight: 500;
+  transition: all 0.15s;
+}
+.avatar:hover { border-color: var(--gold3); color: var(--txt); }
+.avatarInitials {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--gold4); border: 1px solid var(--gold3);
+  color: var(--gold2); font-size: 0.78rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.avatarName { font-size: 0.84rem; }
+.chevron { font-size: 0.65rem; color: var(--txt3); }
+
+.dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  border-radius: var(--radius-lg); min-width: 210px;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.5);
+  overflow: hidden; z-index: 200;
+}
+.dropItem {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.65rem 1.1rem; font-size: 0.865rem; color: var(--txt2);
+  cursor: pointer; background: none; border: none; width: 100%;
+  text-align: left; font-family: 'DM Sans', sans-serif;
+  transition: all 0.12s;
+}
+.dropItem:hover { background: var(--bg4); color: var(--txt); }
+.dropDivider { height: 1px; background: var(--brd); margin: 0.25rem 0; }
+.dropLogout { color: var(--coral) !important; }
+.dropLogout:hover { background: var(--coral2) !important; }
+
+/* Hamburger */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--txt2); border-radius: 2px; transition: all 0.22s; }
+.hamburgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburgerOpen span:nth-child(2) { opacity: 0; }
+.hamburgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .hamburger { display: flex; }
+  .hideOnMobile { display: none !important; }
+  .links {
+    display: none; position: fixed; top: 66px; left: 0; right: 0;
+    background: var(--bg2); border-bottom: 1px solid var(--brd);
+    flex-direction: column; padding: 0.75rem; gap: 2px; z-index: 999;
+  }
+  .links.open { display: flex; }
+  .link { padding: 0.75rem 1rem; border-radius: var(--radius); width: 100%; }
+}
