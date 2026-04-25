@@ -1,0 +1,14 @@
+.footer { background: var(--bg1); border-top: 1px solid var(--brd); padding: 3.5rem 0 1.5rem; margin-top: 4rem; }
+.grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--txt); margin-bottom: 0.75rem; }
+.logo em { color: var(--gold); font-style: italic; }
+.tagline { font-size: 0.85rem; color: var(--txt3); line-height: 1.6; margin-bottom: 0.5rem; }
+.ref { font-size: 0.78rem; color: var(--txt4); }
+.colTitle { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--gold3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1rem; }
+.linkList { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.linkList li a, .linkList li span { font-size: 0.875rem; color: var(--txt3); transition: color 0.15s; cursor: pointer; }
+.linkList li a:hover { color: var(--gold); }
+.bottom { border-top: 1px solid var(--brd); padding-top: 1.25rem; text-align: center; }
+.bottom p { font-size: 0.78rem; color: var(--txt4); }
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+@media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
