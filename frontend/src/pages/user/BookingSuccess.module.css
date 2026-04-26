@@ -1,20 +1,81 @@
+/* ═══════════════════════════════════════════════════════════════
+   BookingSuccess.module.css — Post-Booking Confirmation Page
+   ═══════════════════════════════════════════════════════════════
+   Used by BookingSuccessPage.jsx at /user/booking-success.
+   Shown immediately after a successful payment submission.
+   Displays: animated teal check icon, booking reference box,
+   detail breakdown, action buttons, and optional ride suggestions.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   Full viewport height centred layout so the success card always
+   appears in the middle of the screen regardless of content height.
+   ──────────────────────────────────────────────────────────────── */
 .page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+
+/* ── Success Card ────────────────────────────────────────────────
+   .card — bg2 card; radius-xl (24px) for a premium rounded feel;
+           max-width 520px; text-align: center for all content
+   ──────────────────────────────────────────────────────────────── */
 .card { background: var(--bg2); border: 1px solid var(--brd2); border-radius: var(--radius-xl); padding: 3rem 2.5rem; max-width: 520px; width: 100%; text-align: center; }
+
+/* ── Animated Check Icon ─────────────────────────────────────────
+   .iconWrap — flex row centred horizontally
+   .icon     — 72px teal-tinted circle; teal2 border + teal colour
+               2rem checkmark emoji inside the circle
+   ──────────────────────────────────────────────────────────────── */
 .iconWrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
 .icon { width: 72px; height: 72px; border-radius: 50%; background: var(--teal3); border: 2px solid var(--teal2); color: var(--teal); font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+
+/* ── Title & Subtitle ────────────────────────────────────────────
+   .title — Cormorant serif heading ("Booking Confirmed!")
+   .sub   — txt2 supporting message (e.g. "Your trip is all set")
+   ──────────────────────────────────────────────────────────────── */
 .title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--txt); margin-bottom: 0.5rem; }
 .sub { color: var(--txt2); font-size: 0.95rem; margin-bottom: 1.75rem; }
+
+/* ── Booking Reference Box ───────────────────────────────────────
+   .refBox   — bg3 highlighted box with gold3 border to draw attention
+               to the booking reference number
+   .refLabel — tiny uppercase label ("YOUR BOOKING REFERENCE")
+   .refNum   — large Cormorant serif gold number (e.g. "BK-20240512")
+               letter-spacing: 1px for a code-like appearance
+   ──────────────────────────────────────────────────────────────── */
 .refBox { background: var(--bg3); border: 1px solid var(--gold3); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1.5rem; }
 .refLabel { font-size: 0.72rem; color: var(--txt3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; }
 .refNum { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
+
+/* ── Booking Detail Rows ─────────────────────────────────────────
+   .details    — bg3 left-aligned detail breakdown (date, guests, amount)
+   .detailRow  — flex row: label on left, value on right; bottom border divides rows
+   .detailTotal — bolder version of detailRow for the final total line
+   ──────────────────────────────────────────────────────────────── */
 .details { background: var(--bg3); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.75rem; text-align: left; }
 .detailRow { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--txt2); padding: 0.45rem 0; border-bottom: 1px solid var(--brd); }
 .detailRow:last-child { border: none; }
 .detailTotal { font-weight: 700; color: var(--txt); font-size: 0.95rem; }
+
+/* ── Action Buttons ──────────────────────────────────────────────
+   .actions — flex column of CTA buttons (View Booking, Go to Dashboard)
+              0.65rem gap between buttons; renders above the ride section
+   ──────────────────────────────────────────────────────────────── */
 .actions { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+
+/* ── Ride App Section ────────────────────────────────────────────
+   Optional section shown when the booking includes a physical visit.
+   Suggests PickMe / Uber links to help the user get to the location.
+   .rideSection — bg3 card with brd2 border
+   .rideTitle   — tiny uppercase "GET THERE" label
+   .rideBtns    — flex row of equal-width ride app buttons
+   .rideBtn     — individual app button; gold border + gold text on hover
+   ──────────────────────────────────────────────────────────────── */
 .rideSection { margin-bottom: 1.5rem; padding: 1rem; background: var(--bg3); border: 1px solid var(--brd2); border-radius: var(--radius); }
 .rideTitle { font-size: 0.8rem; font-weight: 700; color: var(--txt3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem; }
 .rideBtns { display: flex; gap: 0.75rem; justify-content: center; }
 .rideBtn { flex: 1; padding: 0.55rem 1rem; border-radius: var(--radius); background: var(--bg2); border: 1px solid var(--brd2); color: var(--txt2); font-size: 0.82rem; font-weight: 600; text-decoration: none; text-align: center; transition: border-color 0.2s, color 0.2s; }
 .rideBtn:hover { border-color: var(--gold3); color: var(--gold); }
+
+/* ── Footer Note ─────────────────────────────────────────────────
+   Small txt4 note at the bottom (e.g. "A confirmation email has been sent").
+   ──────────────────────────────────────────────────────────────── */
 .note { font-size: 0.8rem; color: var(--txt4); line-height: 1.6; }

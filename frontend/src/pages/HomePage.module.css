@@ -1,6 +1,35 @@
+/* ═══════════════════════════════════════════════════════════════
+   HomePage.module.css — Homepage Layout & Section Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by HomePage.jsx at / (root route).
+   Sections in order: Hero → Location Bar → Categories → How It Works
+                    → Reference Card → Featured/Nearby Places → Packages → CTA
+   overflow-x: hidden on .page prevents any horizontal scroll from
+   wide images or elements slightly overshooting their containers.
+   ═══════════════════════════════════════════════════════════════ */
+
 .page { overflow-x: hidden; }
 
-/* ── HERO ── */
+/* ── Hero Section ────────────────────────────────────────────────
+   .hero           — 92vh min-height; flex centred vertically; padding-top: 6rem
+                     accounts for the 66px navbar + comfortable spacing
+   .heroContent    — z-index: 2 keeps text above the bg overlay layer
+   .heroTitle      — fluid font-size via clamp(2.8rem, 6vw, 5rem)
+                     scales gracefully between mobile and ultra-wide
+   .heroTitle em   — "Scape" portion in gold italic
+   .heroSub        — max-width 540px paragraph; txt2 + 1.7 line-height
+   .heroBtns       — flex row of CTA buttons with flex-wrap for mobile
+   .heroStats      — flex row of 3 stats (places/users/rating) separated
+                     by .statDiv vertical lines
+   .stat           — individual stat: .statNum (gold) above .statLabel (muted)
+   .statDiv        — 1px × 32px brd2 vertical separator between stat items
+
+   Background layers:
+   .heroBg         — absolute inset, z-index: 0 sits behind everything
+   .heroBgImg      — full-cover background photo
+   .heroBgOverlay  — gradient from near-opaque bg0 (left) to semi-transparent (right)
+                     preserves text readability while showing the image on wider screens
+   ──────────────────────────────────────────────────────────────── */
 .hero { position: relative; min-height: 92vh; display: flex; align-items: center; padding: 6rem 0 4rem; overflow: hidden; }
 .heroContent { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 .heroTitle { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.8rem, 6vw, 5rem); color: var(--txt); line-height: 1.1; margin-bottom: 1.25rem; }
@@ -16,7 +45,16 @@
 .heroBgImg { width: 100%; height: 100%; object-fit: cover; }
 .heroBgOverlay { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(10,12,11,0.96) 0%, rgba(10,12,11,0.85) 50%, rgba(10,12,11,0.5) 100%); z-index: 1; }
 
-/* ── LOCATION BAR ── */
+/* ── Location Status Bar ─────────────────────────────────────────
+   Thin strip below the hero showing the user's GPS status.
+   bg2 background + brd borders on both top and bottom.
+   .locDot variants animate or show static colours for GPS states:
+     .locFound  — teal dot with glow (GPS acquired successfully)
+     .locating  — gold dot with pulse animation (requesting GPS)
+     .locError  — coral dot (GPS denied or unavailable)
+   @keyframes pulse — fades the locating dot from 100% to 30% opacity
+   .locTxt     — muted status message text (e.g. "Using your location")
+   ──────────────────────────────────────────────────────────────── */
 .locBar { background: var(--bg2); border-top: 1px solid var(--brd); border-bottom: 1px solid var(--brd); padding: 0.7rem 0; }
 .locInner { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .locDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -26,10 +64,20 @@
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .locTxt { flex: 1; font-size: 0.84rem; color: var(--txt2); }
 
-/* ── SECTION HD ── */
+/* ── Section Header ──────────────────────────────────────────────
+   .sectionHd — flex row: section title/subtitle left, "View All" link right
+                margin-bottom: 1.75rem before the section's grid content
+   ──────────────────────────────────────────────────────────────── */
 .sectionHd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem; }
 
-/* ── CATEGORIES ── */
+/* ── Categories Section ──────────────────────────────────────────
+   .catSection — bg1 background strip separates it from adjacent sections
+   .catGrid    — 8-column grid for the 8 category cards (Beach, Mountain, etc.)
+               responsive: collapses to 4×2 at 1024px
+   .catCard    — flex column: emoji icon above label; hover lifts 2px + gold border
+   .catIcon    — 1.75rem category emoji
+   .catLabel   — tiny uppercase truncated label
+   ──────────────────────────────────────────────────────────────── */
 .catSection { background: var(--bg1); }
 .catGrid { display: grid; grid-template-columns: repeat(8,1fr); gap: 0.75rem; }
 .catCard { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1.2rem 0.5rem; background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); transition: all 0.18s; }
@@ -37,7 +85,16 @@
 .catIcon { font-size: 1.75rem; }
 .catLabel { font-size: 0.7rem; font-weight: 600; color: var(--txt3); text-transform: uppercase; letter-spacing: 0.4px; text-align: center; }
 
-/* ── HOW IT WORKS ── */
+/* ── How It Works Section ────────────────────────────────────────
+   .howSection — bg1 background strip
+   .stepsGrid  — 4-column grid for the 4 "how it works" step cards
+   .stepCard   — bg2 card with position: relative for the large step number
+   .stepN      — absolute top-right decorative step number (1–4);
+                 large Cormorant serif txt4 — very faint/decorative only
+   .stepIcon   — 2.2rem step emoji icon
+   .stepTitle  — serif step heading
+   .stepDesc   — muted description paragraph; 1.62 line-height
+   ──────────────────────────────────────────────────────────────── */
 .howSection { background: var(--bg1); }
 .stepsGrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
 .stepCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.75rem 1.25rem; position: relative; }
@@ -46,7 +103,14 @@
 .stepTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--txt); margin-bottom: 0.6rem; }
 .stepDesc { font-size: 0.82rem; color: var(--txt3); line-height: 1.62; }
 
-/* ── REFERENCE CARD ── */
+/* ── Reference Point Card ────────────────────────────────────────
+   Shows the trip origin point (38 Rajasinghe Road, Dehiwala).
+   All distances on place cards are calculated from this reference.
+   .refCard   — bg2 card with a 3px left gold border accent
+               (border-radius 0 on left because the border is the accent)
+   .refLeft   — flex row: icon + text block
+   .refCoords — monospace coordinates line in gold3
+   ──────────────────────────────────────────────────────────────── */
 .refCard { background: var(--bg2); border: 1px solid var(--brd); border-left: 3px solid var(--gold); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
 .refLeft { display: flex; align-items: flex-start; gap: 1rem; }
 .refIcon { font-size: 2rem; flex-shrink: 0; margin-top: 0.2rem; }
@@ -55,7 +119,18 @@
 .refCoords { font-size: 0.78rem; color: var(--gold3); font-family: monospace; margin-bottom: 0.4rem; }
 .refNote { font-size: 0.78rem; color: var(--txt3); }
 
-/* ── PACKAGES ── */
+/* ── Package Cards (Homepage Preview) ───────────────────────────
+   A horizontal card grid preview of featured packages.
+   .pkgCard   — bg2 card with image top + body bottom; lifts on hover
+   .pkgImg    — 180px image header; relative for discount badge
+   .pkgDiscount — absolute top-right coral badge (e.g. "20% OFF")
+   .pkgBody   — flex column: name + description + price/button footer
+   .pkgName   — serif package name; 2-line max via ellipsis in parent
+   .pkgDesc   — muted description; flex: 1 pushes the footer to the bottom
+   .pkgFooter — space-between: old strikethrough price left, new price right
+   .pkgOldPrice — text-decoration: line-through to show the discount
+   .pkgPrice  — Cormorant serif gold price
+   ──────────────────────────────────────────────────────────────── */
 .pkgCard { display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); overflow: hidden; transition: all 0.2s; }
 .pkgCard:hover { border-color: var(--brd2); transform: translateY(-3px); }
 .pkgImg { height: 180px; overflow: hidden; position: relative; flex-shrink: 0; }
@@ -67,7 +142,15 @@
 .pkgOldPrice { font-size: 0.75rem; color: var(--txt4); text-decoration: line-through; }
 .pkgPrice { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--gold); }
 
-/* ── CTA ── */
+/* ── CTA (Call to Action) Section ────────────────────────────────
+   Bottom section prompting guests to register or logged-in users to explore.
+   .ctaSection — 3rem top / 4rem bottom padding
+   .ctaCard    — large centred card with an accent bar on the left edge
+   .ctaAccent  — 4px gold vertical bar on the left via absolute positioning
+   .ctaTitle   — 2.25rem serif heading
+   .ctaSub     — max-width 560px muted paragraph; centred
+   .ctaBtns    — flex row of buttons; justify-content: center + flex-wrap
+   ──────────────────────────────────────────────────────────────── */
 .ctaSection { padding: 3rem 0 4rem; }
 .ctaCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-xl); padding: 3.5rem 3rem; text-align: center; position: relative; overflow: hidden; }
 .ctaAccent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--gold); }
@@ -75,5 +158,9 @@
 .ctaSub { font-size: 1rem; color: var(--txt2); margin-bottom: 2rem; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.65; }
 .ctaBtns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   1024px — catGrid: 8→4 columns; stepsGrid: 4→2 columns
+   768px  — hero min-height drops to 70vh; catGrid stays at 4×2
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) { .catGrid { grid-template-columns: repeat(4,1fr); } .stepsGrid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 768px) { .hero { min-height: 70vh; } .catGrid { grid-template-columns: repeat(4,1fr); } }

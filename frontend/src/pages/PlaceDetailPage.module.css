@@ -1,18 +1,73 @@
+/* ═══════════════════════════════════════════════════════════════
+   PlaceDetailPage.module.css — Place Detail Page Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by PlaceDetailPage.jsx at /places/:slug.
+   Layout: 1fr main content + 320px sticky sidebar.
+   Main content has: gallery, tab bar (Overview/Travel/Reviews/Map),
+   tab panel content, and per-tab sub-sections.
+   Sidebar shows: category, name, rating, distance, ticket prices, quick facts.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   1.5rem top / 4rem bottom padding; slightly less top than other pages
+   because the breadcrumb navigation sits above the main content.
+   ──────────────────────────────────────────────────────────────── */
 .page { padding: 1.5rem 0 4rem; }
+
+/* ── Breadcrumb ──────────────────────────────────────────────────
+   .breadcrumb — small txt3 "Home > Explore > Place Name" trail
+   .breadcrumb a — gold3 links; gold on hover
+   ──────────────────────────────────────────────────────────────── */
 .breadcrumb { font-size: 0.8rem; color: var(--txt3); margin-bottom: 1.5rem; }
 .breadcrumb a { color: var(--gold3); } .breadcrumb a:hover { color: var(--gold); }
+
+/* ── Two-Column Layout ───────────────────────────────────────────
+   .layout — 1fr main + 320px sticky sidebar
+   .main   — flex column with 1.25rem gap between sections (gallery, tabs, content)
+   ──────────────────────────────────────────────────────────────── */
 .layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
 .main { display: flex; flex-direction: column; gap: 1.25rem; }
 .gallery { }
+
+/* ── Gallery ─────────────────────────────────────────────────────
+   .mainImg    — 400px primary image; radius-lg corners; relative for the badge
+   .featBadge  — absolute top-left "Featured" badge on the main image
+   .thumbs     — horizontal flex row of thumbnail buttons below the main image
+   .thumb      — 80×62px thumbnail; transparent border → gold on active (.thumbOn)
+   .thumbOn    — 2px gold border to indicate the selected thumbnail
+   ──────────────────────────────────────────────────────────────── */
 .mainImg { height: 400px; border-radius: var(--radius-lg); overflow: hidden; position: relative; }
 .featBadge { position: absolute; top: 1rem; left: 1rem; background: var(--gold4); color: var(--gold2); border: 1px solid rgba(201,168,76,0.3); padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
 .thumbs { display: flex; gap: 0.6rem; margin-top: 0.6rem; }
 .thumb { width: 80px; height: 62px; border-radius: var(--radius); overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; flex-shrink: 0; }
 .thumbOn { border-color: var(--gold); }
+
+/* ── Tab Bar ─────────────────────────────────────────────────────
+   .tabs  — pill-shaped tab bar containing 4 tabs:
+            Overview / Travel / Reviews / Map
+            bg2 + brd border; padding: 4px acts as the tab container inset
+   .tab   — flex: 1 so all tabs are equal width; 9px internal border-radius
+            (slightly less than the container's radius-lg)
+            no border/bg default; bg3 + gold2 when active (.tabOn)
+   .tabOn — applied via activeTab state in JSX; bg4 + gold2 text
+   ──────────────────────────────────────────────────────────────── */
 .tabs { display: flex; gap: 2px; background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 4px; flex-wrap: wrap; }
 .tab { flex: 1; padding: 0.55rem 0.65rem; border-radius: 9px; border: none; background: none; color: var(--txt3); font-size: 0.77rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
 .tab:hover { color: var(--txt); background: var(--bg3); }
 .tabOn { background: var(--bg4) !important; color: var(--gold2) !important; }
+
+/* ── Tab Panel Content ───────────────────────────────────────────
+   .tabContent — bg2 card containing the active tab's rendered content
+   .secH       — Cormorant serif section sub-heading inside a tab panel
+   .fullDesc   — full place description; pre-line preserves newlines from the DB
+   .infoGrid   — 2-column grid of info boxes (hours, crowd level, entry fee, etc.)
+   .infoBox    — bg3 card for a single info item
+   .infoL      — tiny uppercase label (e.g. "OPENING HOURS")
+   .infoV      — bold value text (e.g. "6:00 AM – 6:00 PM")
+   .tag        — pill chip tag used in the "Tags" section
+   .tipList    — list of visitor tips; → gold arrow pseudo-element
+   .travelNote — gold left-border note block at the bottom of Overview tab
+   ──────────────────────────────────────────────────────────────── */
 .tabContent { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.5rem; }
 .secH { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--txt); margin-bottom: 0.9rem; }
 .fullDesc { font-size: 0.875rem; color: var(--txt2); line-height: 1.78; margin-bottom: 1.5rem; white-space: pre-line; }
@@ -25,6 +80,22 @@
 .tipList li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.875rem; color: var(--txt2); }
 .tipList li::before { content: '→'; color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 .travelNote { background: var(--bg3); border-left: 2px solid var(--gold); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.85rem 1rem; font-size: 0.85rem; color: var(--txt2); margin-top: 1.25rem; line-height: 1.65; }
+
+/* ── Reviews Tab ─────────────────────────────────────────────────
+   .revForm    — bg3 review submission form panel
+   .starPicker — flex row of star buttons for the rating selector
+   .starBtn    — clickable star; txt4 default → gold when active (.starOn)
+   .starLabel  — text label showing the selected rating description
+   .signInCard — shown instead of the form when the user is not logged in
+   .revList    — flex column of review items
+   .revItem    — bg3 card for a single review
+   .revHd      — flex row: avatar + name + date (date pushed to the right)
+   .revAv      — 30px gold initials circle
+   .revName    — bold reviewer name
+   .revDate    — tiny txt4 relative date (pushed right via margin-left: auto)
+   .revTitle   — review headline text
+   .revText    — review body paragraph
+   ──────────────────────────────────────────────────────────────── */
 .revForm { background: var(--bg3); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; }
 .starPicker { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; }
 .starBtn { font-size: 1.55rem; background: none; border: none; cursor: pointer; color: var(--txt4); transition: color 0.1s; line-height: 1; padding: 0; }
@@ -40,6 +111,19 @@
 .revDate { font-size: 0.72rem; color: var(--txt4); margin-left: auto; }
 .revTitle { font-size: 0.875rem; font-weight: 600; color: var(--txt); margin-bottom: 0.3rem; }
 .revText { font-size: 0.84rem; color: var(--txt2); line-height: 1.6; }
+
+/* ── Travel Tab ──────────────────────────────────────────────────
+   .routeDist     — distance display at the top of the Travel tab
+   .routeDistNum  — 2.5rem Cormorant serif gold distance (e.g. "12.4")
+   .routeDistLabel — "km from reference point" muted label
+   .modeGrid      — 5-column transport mode grid (Car/Tuk/Bus/Train/Bike)
+   .modeCard      — bg3 card; centred icon + label + duration + cost
+   .modeIcon      — 1.6rem transport emoji
+   .modeLabel     — tiny transport type label
+   .modeDur       — bold travel time (e.g. "45 min")
+   .modeCost      — gold3 estimated cost below duration
+   .appBtns       — flex row of ride-app deep-link buttons
+   ──────────────────────────────────────────────────────────────── */
 .routeDist { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.5rem; }
 .routeDistNum { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); }
 .routeDistLabel { font-size: 0.875rem; color: var(--txt3); }
@@ -50,6 +134,18 @@
 .modeDur { font-size: 0.88rem; font-weight: 700; color: var(--txt); }
 .modeCost { font-size: 0.72rem; color: var(--gold3); margin-top: 2px; }
 .appBtns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* ── Sticky Sidebar ──────────────────────────────────────────────
+   .sidebar  — position: sticky at 88px (66px navbar + 22px buffer)
+   .sideCard — bg2 card used for each sidebar section
+   .sideCat  — tiny uppercase category label above the place name
+   .sideName — large Cormorant serif place name; 1.2 line-height
+   .sideRating — flex row: star + numeric rating + review count
+   .ratingNum  — bold rating number
+   .ratingCount — muted "(N reviews)" text
+   .distRow  — distance from reference point with map pin icon
+   .divider  — 1px brd horizontal separator between sidebar sections
+   ──────────────────────────────────────────────────────────────── */
 .sidebar { position: sticky; top: 88px; }
 .sideCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.25rem; }
 .sideCat { font-size: 0.72rem; font-weight: 700; color: var(--txt3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
@@ -59,11 +155,29 @@
 .ratingCount { font-size: 0.75rem; color: var(--txt4); }
 .distRow { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--txt2); margin-bottom: 0.75rem; }
 .divider { height: 1px; background: var(--brd); margin: 1rem 0; }
+
+/* ── Ticket Price Table ──────────────────────────────────────────
+   .ticketTitle — tiny uppercase "ADMISSION" label above the price table
+   .ticketTable — full-width table; last-child td right-aligned gold2 prices
+   ──────────────────────────────────────────────────────────────── */
 .ticketTitle { font-size: 0.7rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem; }
 .ticketTable { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
 .ticketTable td { padding: 0.4rem 0; font-size: 0.82rem; color: var(--txt2); border-bottom: 1px solid var(--brd); }
 .ticketTable td:last-child { text-align: right; font-weight: 600; color: var(--gold2); }
+
+/* ── Quick Facts List ────────────────────────────────────────────
+   .quickList — flex column of emoji + text fact items
+   .quickItem — flex row with 0.75rem gap; txt2 colour
+   ──────────────────────────────────────────────────────────────── */
 .quickList { display: flex; flex-direction: column; gap: 0.55rem; }
 .quickItem { display: flex; gap: 0.75rem; font-size: 0.82rem; color: var(--txt2); }
+
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   1024px — two-column layout collapses to single column;
+            sidebar loses sticky positioning;
+            modeGrid drops from 5 to 3 columns
+   480px  — infoGrid collapses to single column;
+            modeGrid drops to 2 columns
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; } .modeGrid { grid-template-columns: repeat(3,1fr); } }
 @media (max-width: 480px) { .infoGrid { grid-template-columns: 1fr; } .modeGrid { grid-template-columns: repeat(2,1fr); } }

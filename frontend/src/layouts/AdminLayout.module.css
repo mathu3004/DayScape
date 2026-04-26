@@ -1,5 +1,25 @@
+/* ═══════════════════════════════════════════════════════════════
+   AdminLayout.module.css — Admin Panel Shell & Sidebar
+   ═══════════════════════════════════════════════════════════════
+   Used by AdminLayout.jsx which wraps all /admin/* routes.
+   Layout: fixed 240px sidebar on the left + fluid main content on the right.
+   The sidebar contains: logo, nav items (from navItems array), admin info, logout.
+   At ≤768px the sidebar narrows to 200px; no hamburger/overlay is used.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Root Layout ─────────────────────────────────────────────────
+   .layout — full-viewport flex row; bg0 ensures the outer canvas is dark
+             even when page content is shorter than the viewport.
+   ──────────────────────────────────────────────────────────────── */
 .layout { display: flex; min-height: 100vh; background: var(--bg0); }
 
+/* ── Sidebar Shell ───────────────────────────────────────────────
+   .sidebar      — fixed 240px left panel; bg1 (slightly lighter than bg0)
+                   position: fixed keeps it in place during page scroll
+                   z-index: 100 — above page content, below any modals
+                   flex column lets the nav area expand and the footer stick at the bottom
+   .sidebarHeader — logo area with bottom border separator
+   ──────────────────────────────────────────────────────────────── */
 .sidebar {
   width: 240px; flex-shrink: 0;
   background: var(--bg1); border-right: 1px solid var(--brd);
@@ -7,10 +27,25 @@
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
 }
 .sidebarHeader { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--brd); }
+
+/* ── Sidebar Logo ────────────────────────────────────────────────
+   .logo    — Cormorant Garamond brand mark; slightly smaller than navbar logo
+   .logo em — "Scape" portion in gold italic
+   .logoSub — "ADMIN PANEL" label beneath the logo in tiny uppercase txt4
+   ──────────────────────────────────────────────────────────────── */
 .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--txt); }
 .logo em { color: var(--gold); font-style: italic; }
 .logoSub { font-size: 0.7rem; color: var(--txt4); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
 
+/* ── Sidebar Navigation ──────────────────────────────────────────
+   .nav      — flex column of nav items; flex: 1 fills space between header and footer
+               overflow-y: auto handles very long nav lists on small screens
+   .navItem  — pill-shaped nav link: icon + label side by side
+               txt3 default; bg3 + txt on hover
+   .navItem.active — gold4 bg + gold2 text + subtle border for the current route
+               applied by NavLink's activeClassName when href matches URL
+   .icon     — 20px-wide centred emoji/icon column; font-size 1rem
+   ──────────────────────────────────────────────────────────────── */
 .nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
 .navItem {
   display: flex; align-items: center; gap: 0.75rem;
@@ -22,6 +57,16 @@
 .navItem.active { background: var(--gold4); color: var(--gold2); border: 1px solid rgba(201,168,76,0.15); }
 .icon { font-size: 1rem; width: 20px; text-align: center; }
 
+/* ── Sidebar Footer ──────────────────────────────────────────────
+   .sidebarFooter — pinned at the bottom of the sidebar via flex layout
+                    contains admin avatar + name/role + logout button
+   .adminInfo     — flex row: avatar circle left, name + role right
+   .adminAvatar   — 34px gold-tinted circle with admin's first initial
+   .adminName     — admin's display name (bold, small)
+   .adminRole     — "Administrator" label in tiny txt4
+   .logoutBtn     — full-width transparent button with brd2 border
+                    hover state changes to coral (red-ish) to flag destructive action
+   ──────────────────────────────────────────────────────────────── */
 .sidebarFooter { padding: 1rem 0.75rem; border-top: 1px solid var(--brd); }
 .adminInfo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
 .adminAvatar {
@@ -40,9 +85,19 @@
 }
 .logoutBtn:hover { border-color: var(--coral); color: var(--coral); background: var(--coral2); }
 
+/* ── Main Content Area ───────────────────────────────────────────
+   .main      — offset by the 240px sidebar width via margin-left
+                flex: 1 fills the remaining horizontal space
+   .mainInner — 2rem padding on all sides; max-width 1100px prevents
+                tables and grids from becoming too wide on large monitors
+   ──────────────────────────────────────────────────────────────── */
 .main { margin-left: 240px; flex: 1; min-height: 100vh; }
 .mainInner { padding: 2rem; max-width: 1100px; }
 
+/* ── Responsive Breakpoint ───────────────────────────────────────
+   768px — sidebar narrows to 200px; main adjusts its margin accordingly.
+           No hamburger is used; the sidebar stays visible on tablet.
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .sidebar { width: 200px; }
   .main { margin-left: 200px; }

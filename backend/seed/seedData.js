@@ -1,7 +1,44 @@
+/**
+ * backend/seed/seedData.js — Database Seed Script
+ *
+ * This script populates the DayScape MongoDB database with a full set of
+ * realistic demo data, including:
+ *   - 9 place categories with name, slug, emoji icon, colour, description
+ *   - 1 admin account (admin@dayscape.lk)
+ *   - 2 sample users (local + foreigner)
+ *   - 11 Colombo attractions with rich detail content (descriptions, tips, tickets, images)
+ *   - 4 approved sample reviews (2 for Viharamahadevi, 1 Gangaramaya, 1 Galle Face)
+ *   - 6 curated tour packages (cultural, coastal, family, nature, luxury, general)
+ *
+ * Run via: node backend/seed/seedData.js
+ *
+ * IMPORTANT: This script calls deleteMany({}) on ALL collections before seeding.
+ * Running it on a live database will permanently destroy all existing data.
+ * Only run in development or to re-initialise a clean demo environment.
+ *
+ * Distance calculations:
+ *   Each place's distanceFromReference and distanceFromAirport fields are
+ *   computed automatically using the Haversine formula with the REF and BIA
+ *   coordinate constants defined below.
+ */
+
+// ── Module Imports ────────────────────────────────────────────────────────────────
+// mongoose — MongoDB ODM for connecting and seeding via Mongoose models
+// dotenv   — loads MONGO_URI from the ../.env file (one directory up from seed/)
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: '../.env' });
 
+// ── Mongoose Models ───────────────────────────────────────────────────────────────
+// All seven data models used in the DayScape application.
+// Each model maps to a MongoDB collection:
+//   User     → users
+//   Admin    → admins
+//   Category → categories
+//   Place    → places
+//   Package  → packages
+//   Review   → reviews
+//   Cart     → carts
 const User    = require('../models/User');
 const Admin   = require('../models/Admin');
 const Category= require('../models/Category');
@@ -10,12 +47,39 @@ const Package = require('../models/Package');
 const Review  = require('../models/Review');
 const Cart    = require('../models/Cart');
 
+// ── MongoDB Connection URI ────────────────────────────────────────────────────────
+// Uses the MONGO_URI environment variable from .env if present.
+// Falls back to a local MongoDB instance at the default port if not set.
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dayscape';
 
-// ── Reference coordinates ─────────────────────────────────────
+// ── Reference coordinates ─────────────────────────────────────────────────────
+// REF — 38 Rajasinghe Road, Dehiwala (the app's default origin/departure point)
+//   Used as the "from" coordinate when calculating distanceFromReference for each place.
+//   Also used as fallback GPS origin in booking/planning pages when user denies location.
+// BIA — Bandaranaike International Airport, Katunayake
+//   Used as the "from" coordinate when calculating distanceFromAirport for each place.
+//   This distance is shown to users arriving by air to estimate travel time to each attraction.
 const REF = { lat: 6.868671, lng: 79.860689 };
 const BIA = { lat: 7.180760, lng: 79.884100 }; // Bandaranaike Intl Airport
 
+// ── Haversine Distance Formula ────────────────────────────────────────────────────
+// Calculates the great-circle distance in kilometres between two GPS coordinates
+// using the Haversine formula, which accounts for Earth's spherical shape.
+//
+// Parameters:
+//   lat1, lon1 — latitude and longitude of the first point (decimal degrees)
+//   lat2, lon2 — latitude and longitude of the second point (decimal degrees)
+//
+// Algorithm:
+//   1. Convert the difference in latitude (dLat) and longitude (dLon) to radians
+//   2. Compute the central angle 'a' using the Haversine identity:
+//      a = sin²(dLat/2) + cos(lat1) × cos(lat2) × sin²(dLon/2)
+//   3. Compute the angular distance 'c' using the inverse Haversine (atan2)
+//   4. Multiply by Earth's mean radius R = 6371 km to get the distance in km
+//
+// Returns: distance in km, rounded to 2 decimal places via parseFloat + toFixed
+// This same formula is implemented client-side in BookingSuccessPage and BookingDetailPage
+// for real-time travel distance calculations with the user's live GPS position.
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -24,7 +88,16 @@ function haversine(lat1, lon1, lat2, lon2) {
   return parseFloat((R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(2));
 }
 
-// ── Categories ────────────────────────────────────────────────
+// ── Categories ────────────────────────────────────────────────────────────────
+// 9 category documents covering the range of place types seeded below.
+// Fields:
+//   name        — display name shown in ExplorePage filter bar and PlaceCards
+//   slug        — URL-safe identifier used in ?cat= query parameter on ExplorePage
+//   icon        — emoji character displayed alongside the category name in the filter bar
+//   color       — hex colour used for category accent badges on PlaceCards
+//   description — admin-facing description of what this category covers
+//
+// After insert, a C{} lookup map (slug → _id) is built to assign category to places.
 const CATEGORIES = [
   { name:'Park / Recreational',        slug:'park-recreational',        icon:'🌳', color:'#1db87a', description:'Parks, gardens and outdoor recreational spaces' },
   { name:'Religious Site',             slug:'religious-site',            icon:'🛕', color:'#c9a84c', description:'Temples, churches, mosques and sacred places' },
@@ -38,6 +111,25 @@ const CATEGORIES = [
 ];
 
 // ── Unsplash image URLs per theme ─────────────────────────────
+// IMG is a named map of public image URLs used as coverImage and gallery arrays
+// for each of the 11 seeded places. Images are grouped by theme prefix:
+//
+//   park1–4     → Viharamahadevi Park photos
+//   temple1–5   → Gangaramaya Temple photos
+//   beach1–5    → Galle Face Green photos
+//   city1–5     → Colombo Port City photos
+//   zoo1–5      → Dehiwala Zoological Gardens photos
+//   modern1–4   → Cinnamon Life at City of Dreams photos
+//   museum1–3   → National Museum Colombo photos (museum4 used as gallery[3])
+//   wetland1–5  → Beddagana Wetland Park photos
+//   water1–5    → Kelaniya Water World Lanka photos
+//   tower1–5    → Colombo Lotus Tower photos
+//   science1–3  → Sri Lanka Planetarium photos
+//
+// URLs point to real publicly accessible images from srilanka800.com,
+// tripadvisor, CDN sources, and various tourism sites.
+// Note: External URLs may become unavailable over time — this is a known
+// limitation of seeded demo data using public image sources.
 const IMG = {
   park1:    'https://srilanka800.com/wp-content/uploads/2025/11/Giant-seated-Buddha-in-the-Viharamahadevi-park.jpg',
   park2:    'https://srilanka800.com/wp-content/uploads/2025/11/Viharamahadevi-Park-3.jpg',
@@ -90,10 +182,21 @@ const IMG = {
   science3: 'https://lh3.googleusercontent.com/pw/AM-JKLWenBobVpSmYKNhl1z20Wi7R7vK10H1F7t9KTJ7rEO27LcB38c-SsrIbEAc6_bQtFofHA3jGS0xRD8X-27BKRPGfIK41N9aqsOfUAsSeTa04UEhJyaGsMAn3a5DQ_p_bXdc2x06SLgpRzn6doJ6Ze84=w578-h304-no?authuser=2'
 };
 
+// ── Main Seed Function ────────────────────────────────────────────────────────────
+// Declared async so all MongoDB operations can be awaited cleanly.
+// Called at the bottom of the file and errors are caught by .catch().
 async function seed() {
+  // ── Step 1: Connect to MongoDB ──────────────────────────────────────────────────
+  // Establish the Mongoose connection before any database operations.
+  // The process will terminate if the connection fails (caught by .catch below).
   await mongoose.connect(MONGO_URI);
   console.log('✓ Connected to MongoDB');
 
+  // ── Step 2: Clear All Existing Collections ──────────────────────────────────────
+  // Wipe all 7 collections simultaneously using Promise.all for maximum speed.
+  // This ensures a completely clean slate before seeding — no duplicate documents,
+  // no stale references, and no leftover data from previous seed runs.
+  // WARNING: This is a destructive operation — existing data is permanently deleted.
   await Promise.all([
     User.deleteMany({}), Admin.deleteMany({}), Category.deleteMany({}),
     Place.deleteMany({}), Package.deleteMany({}), Review.deleteMany({}),
@@ -102,16 +205,29 @@ async function seed() {
   console.log('✓ Cleared existing data');
 
   // ── Categories ──────────────────────────────────────────────
+  // Insert all 9 category documents and build a C{} slug → ObjectId lookup map.
+  // C is used later when assigning category to each place via categorySlug.
+  // The lookup map avoids making 11 separate Category.findOne() queries.
   const cats = await Category.insertMany(CATEGORIES);
   const C = {};
   cats.forEach(c => { C[c.slug] = c._id; });
   console.log('✓ Categories seeded');
 
   // ── Admin ────────────────────────────────────────────────────
+  // Create the single admin account. The Admin model pre-saves the password as a bcrypt hash.
+  // Credentials are printed at the end of the seed for developer reference.
+  // In production these would be changed immediately — these are demo-only credentials.
   await Admin.create({ name:'DayScape Admin', email:'admin@dayscape.lk', password:'Admin@123' });
   console.log('✓ Admin: admin@dayscape.lk / Admin@123');
 
   // ── Users ────────────────────────────────────────────────────
+  // Create two sample users representing the two nationality types in DayScape:
+  //   u1: K. Mathusha — local Sri Lankan user (+94 prefix phone)
+  //   u2: James Wilson — foreigner/tourist user (+44 UK prefix phone)
+  // The nationality field drives different ticket pricing for paid attractions:
+  //   local → localAdult/localChild prices (heavily subsidised)
+  //   foreigner → foreignerAdult/foreignerChild prices (standard international rates)
+  // Passwords are hashed by the User model's pre-save hook before storage.
   const [u1, u2] = await User.create([
     { name:'K. Mathusha', email:'mathusha@example.com', password:'User@123', phone:'+94771234567', nationality:'local' },
     { name:'James Wilson', email:'james@example.com',   password:'User@123', phone:'+447912345678', nationality:'foreigner' },
@@ -119,8 +235,49 @@ async function seed() {
   console.log('✓ Sample users created');
 
   // ── Places - all 11 ─────────────────────────────────────────
+  // An array of 11 raw place objects representing Colombo's major attractions.
+  // Each place uses categorySlug (a string) rather than category (_id) at this stage.
+  // The slug → _id conversion is performed in the placeDocs map() step below.
+  //
+  // Place fields explained:
+  //   name              — display name shown in cards, lists, and map markers
+  //   slug              — URL-safe unique identifier used in /places/:slug route
+  //   categorySlug      — refers to CATEGORIES[].slug; converted to ObjectId below
+  //   shortDescription  — one-line summary shown in PlaceCard and search results
+  //   fullDescription   — multi-paragraph rich description shown on PlaceDetailPage
+  //   address           — full postal address string
+  //   lat / lng         — GPS coordinates used for Leaflet map markers and distance calc
+  //   openingTime       — 'HH:MM' 24-hour format string
+  //   closingTime       — 'HH:MM' 24-hour format string
+  //   closedDays        — array of day name strings when place is closed
+  //   bestTimeOfDay     — user-facing recommendation string
+  //   bestSeason        — user-facing seasonal recommendation
+  //   estimatedDuration — user-facing visit length estimate
+  //   preparationTips   — array of tip strings shown on PlaceDetailPage
+  //   dressCode         — string describing attire requirements
+  //   safetyTips        — array of safety advice strings
+  //   travelNotes       — transport and directions guidance string
+  //   entryType         — 'free' or 'paid'; controls ticket price display
+  //   tickets           — { localAdult, localChild, foreignerAdult, foreignerChild } in LKR
+  //                       All values 0 for free entry places
+  //   coverImage        — primary image URL displayed as the place card hero image
+  //   gallery           — array of image URLs for the PlaceDetailPage gallery
+  //   parkingAvailable  — boolean shown in the Place Facilities section
+  //   nearbyFacilities  — array of nearby landmark strings
+  //   contactInfo       — phone number string
+  //   website           — external URL string (empty string if none)
+  //   rating            — initial average rating (updated by reviews below)
+  //   reviewCount       — initial review count (updated by reviews below)
+  //   popularityScore   — admin-assigned 0–100 popularity metric used for sorting
+  //   tags              — array of keyword strings used for search and filtering
+  //   isFeatured        — boolean; featured places appear on the HomePage Featured section
   const placesRaw = [
     // 1 ─ Viharamahadevi Park
+    // Colombo's largest and most famous public park in Cinnamon Gardens.
+    // Free entry. Family-friendly. Excellent for morning walks and bird watching.
+    // Contains the iconic golden seated Buddha statue and ornamental ponds.
+    // Adjacent to the National Museum and Colombo Town Hall.
+    // Rating seeded as 4.5 and updated again after review insertion (2 reviews).
     {
       name: 'Viharamahadevi Park',
       slug: 'viharamahadevi-park',
@@ -150,6 +307,11 @@ async function seed() {
       isFeatured: true,
     },
     // 2 ─ Gangaramaya Temple
+    // One of the most important and eclectic Buddhist temples in Sri Lanka.
+    // Located on the bank of Beira Lake in Slave Island, Colombo 02.
+    // Famous for: multi-cultural architecture, vast museum, annual Navam Perahera.
+    // Free entry for locals; foreigners pay a museum fee.
+    // Rating seeded as 4.8 and updated after review insertion (1 review).
     {
       name: 'Gangaramaya Temple',
       slug: 'gangaramaya-temple',
@@ -179,6 +341,11 @@ async function seed() {
       isFeatured: true,
     },
     // 3 ─ Galle Face Green
+    // Historic oceanfront promenade stretching 500m along the Indian Ocean.
+    // One of Asia's oldest public recreational areas (est. 1859).
+    // Iconic for sunset views, street food (especially Isso Wade prawn fritters),
+    // kite flying, and the adjacent heritage Galle Face Hotel (est. 1864).
+    // Rating seeded as 4.6 and updated after review insertion (1 review).
     {
       name: 'One Galle Face Green',
       slug: 'galle-face-green',
@@ -208,6 +375,11 @@ async function seed() {
       isFeatured: true,
     },
     // 4 ─ Colombo Port City
+    // The largest private sector investment in Sri Lanka's history —
+    // 269 hectares of land reclaimed from the Indian Ocean.
+    // A mixed-use financial and commercial development in progress.
+    // Currently offers public waterfront promenades with ocean/skyline views.
+    // isFeatured: false — less established as a tourism destination than other places.
     {
       name: 'Colombo Port City',
       slug: 'colombo-port-city',
@@ -237,6 +409,11 @@ async function seed() {
       isFeatured: false,
     },
     // 5 ─ Dehiwala Zoo
+    // Sri Lanka's national zoological park, established 1936.
+    // Located just 2.6 km from REF — the closest major attraction to the reference point.
+    // This closeness is noted in the shortDescription for user travel planning context.
+    // Paid entry with significant price differential between local and foreigner tickets.
+    // Notable: daily elephant show at 3:15 PM (listed as 4:15 PM in tips — admin can correct).
     {
       name: 'Dehiwala Zoological Gardens',
       slug: 'dehiwala-zoological-gardens',
@@ -265,7 +442,11 @@ async function seed() {
       tags: ['zoo','animals','family','educational','children','elephants','conservation','dehiwala'],
       isFeatured: true,
     },
-    // 6 ─ Cinnamon Life
+    // 6 ─ Cinnamon Life at City of Dreams
+    // Sri Lanka's largest integrated resort; USD 800 million+ investment.
+    // Joint venture: John Keells Holdings + Melco Resorts & Entertainment.
+    // Free public entry to dining/retail areas; casino is 21+.
+    // Flagship luxury destination — isFeatured: false because it targets specific audience.
     {
       name: 'Cinnamon Life at City of Dreams',
       slug: 'cinnamon-life-city-of-dreams',
@@ -294,7 +475,13 @@ async function seed() {
       tags: ['luxury','entertainment','hotel','dining','modern','resort','colombo','casino'],
       isFeatured: false,
     },
-    // 7 ─ National Museum
+    // 7 ─ National Museum Colombo
+    // Sri Lanka's largest and most important museum, established 1877.
+    // Houses the royal regalia of the last Kandyan king, ancient Sinhalese sculpture,
+    // ritual masks, and an archive of rare manuscripts.
+    // IMPORTANT: Closed on Fridays and all public Poya (full moon) holidays.
+    // closedDays includes 'Monday' in addition to 'Poya days' (double-check with real schedule).
+    // Paid entry with large foreigner/local price differential.
     {
       name: 'National Museum Colombo',
       slug: 'national-museum-colombo',
@@ -323,7 +510,12 @@ async function seed() {
       tags: ['museum','heritage','cultural','history','art','colonial','must-visit','kandyan'],
       isFeatured: true,
     },
-    // 8 ─ Beddagana Wetland
+    // 8 ─ Beddagana Wetland Park
+    // A Ramsar Wetland of International Importance in Sri Jayawardenepura Kotte.
+    // 17 hectares of protected urban wetland — over 100 bird species.
+    // Elevated boardwalks through reed beds, mangroves, and open water.
+    // Best for early morning bird watching October–March (migratory season).
+    // isFeatured: false — a hidden gem for nature enthusiasts, not mass tourism.
     {
       name: 'Beddagana Wetland Park',
       slug: 'beddagana-wetland-park',
@@ -353,6 +545,11 @@ async function seed() {
       isFeatured: false,
     },
     // 9 ─ Water World Lanka
+    // Full-service water theme park in Kelaniya, ~19 km from reference point.
+    // Wave pool, lazy river, multiple slides (gentle to high-speed), splash zones.
+    // Most popular on weekends and school holidays. Closed some Mondays.
+    // Recommended: book online for discount tickets vs gate price.
+    // isFeatured: false — further from city centre, more of a day-trip destination.
     {
       name: 'Kelaniya Water World Lanka',
       slug: 'kelaniya-water-world-lanka',
@@ -381,7 +578,13 @@ async function seed() {
       tags: ['water-park','family','fun','slides','swimming','day-trip','children','thrill'],
       isFeatured: false,
     },
-    // 10 ─ Lotus Tower
+    // 10 ─ Colombo Lotus Tower
+    // South Asia's tallest self-supported structure at 350.5 metres.
+    // Opened September 2022. Shaped like a blooming lotus flower.
+    // Serves as both a telecoms hub and premium tourism destination.
+    // Observation deck (floors 17–18): 360° panoramic views over Colombo.
+    // Revolving restaurant inside (advance booking required).
+    // isFeatured: true — iconic, must-see Colombo landmark.
     {
       name: 'Colombo Lotus Tower',
       slug: 'colombo-lotus-tower',
@@ -411,6 +614,12 @@ async function seed() {
       isFeatured: true,
     },
     // 11 ─ Sri Lanka Planetarium
+    // Premier astronomy education centre, established 1965, adjacent to Viharamahadevi Park.
+    // Domed projection theatre with digital sky shows in Sinhala, Tamil, and English.
+    // Show duration: 45–60 minutes; shows run at fixed times (cannot join mid-show).
+    // IMPORTANT: Closed Monday, Sunday, and all Poya days — limited opening schedule.
+    // Combines naturally with a Viharamahadevi Park + National Museum day in Colombo 07.
+    // isFeatured: false — niche educational attraction; not mainstream tourism.
     {
       name: 'Sri Lanka Planetarium',
       slug: 'sri-lanka-planetarium',
@@ -442,6 +651,16 @@ async function seed() {
   ];
 
   // ── Enrich with calculated distances and insert ──────────────
+  // Build a second catLookup map from cats (same data as C{} above, rebuilt for clarity).
+  // This second pass is needed to convert the categorySlug string in each placesRaw object
+  // into the correct MongoDB ObjectId from the newly inserted Category documents.
+  //
+  // placeDocs map():
+  //   - Destructure categorySlug out of each raw place (it's not a Place model field)
+  //   - Add category: catLookup[categorySlug] — the actual ObjectId reference
+  //   - Add distanceFromReference: haversine(REF, place GPS) — distance in km from 38 Rajasinghe Rd
+  //   - Add distanceFromAirport:   haversine(BIA, place GPS) — distance in km from Bandaranaike Airport
+  //   All other fields (...rest) are passed through unchanged.
   const catLookup = {};
   cats.forEach(c => { catLookup[c.slug] = c._id; });
 
@@ -455,26 +674,70 @@ async function seed() {
     };
   });
 
+  // Insert all 11 enriched place documents in a single batch operation.
+  // After insert, build PM{} (place map) — a slug → _id lookup used by reviews and packages.
   const places = await Place.insertMany(placeDocs);
   console.log(`✓ ${places.length} places seeded`);
 
+  // PM = Place Map: slug → ObjectId
+  // Used below to create review.place references and package.places arrays
+  // without needing additional database queries.
   const PM = {}; // place map slug → _id
   places.forEach(p => { PM[p.slug] = p._id; });
 
   // ── Sample Reviews ───────────────────────────────────────────
+  // 4 sample reviews from the two seeded users, all isApproved: true.
+  // Distribution:
+  //   - 2 reviews for Viharamahadevi Park (u1 rating 5, u2 rating 4 → avg 4.5, count 2)
+  //   - 1 review for Gangaramaya Temple (u1 rating 5 → avg 5.0, count 1)
+  //   - 1 review for Galle Face Green (u2 rating 5 → avg 5.0, count 1)
+  //
+  // All reviews are pre-approved (isApproved: true) so they appear immediately
+  // in the public interface without requiring admin approval after seeding.
+  //
+  // visitDate: realistic past dates (Feb–Mar 2026) appropriate for demo data.
+  //
+  // After insertMany, Place.findByIdAndUpdate sets the rating and reviewCount
+  // to match the calculated averages — keeping the denormalised fields accurate.
   await Review.insertMany([
     { user: u1._id, place: PM['viharamahadevi-park'],     rating:5, title:'Perfect morning escape', comment:'I jog here every weekend. The golden Buddha is stunning at sunrise and the park is always well-kept. Highly recommended for families and joggers alike.', visitDate: new Date('2026-02-15'), isApproved: true },
     { user: u2._id, place: PM['viharamahadevi-park'],     rating:4, title:'Lovely park, weekend crowds', comment:'Beautiful park with nice gardens. A bit crowded on Sunday mornings but still enjoyable. The pond area with lily pads is particularly picturesque.', visitDate: new Date('2026-03-02'), isApproved: true },
     { user: u1._id, place: PM['gangaramaya-temple'],       rating:5, title:'An unforgettable experience', comment:'The museum inside is absolutely extraordinary - artifacts from all over the world. The architectural mix of styles is unique. A must-visit for any Colombo trip.', visitDate: new Date('2026-01-20'), isApproved: true },
     { user: u2._id, place: PM['galle-face-green'],         rating:5, title:'Best sunset in Colombo', comment:'The Isso Wade street food is worth every rupee. The ocean breeze at sunset makes this the most romantic spot in the city. We stayed for two hours.', visitDate: new Date('2026-02-28'), isApproved: true },
   ]);
+  // Update the denormalised rating and reviewCount fields on the three reviewed places.
+  // These fields are stored on the Place document itself for fast reads without aggregation.
   await Place.findByIdAndUpdate(PM['viharamahadevi-park'], { rating:4.5, reviewCount:2 });
   await Place.findByIdAndUpdate(PM['gangaramaya-temple'], { rating:5.0, reviewCount:1 });
   await Place.findByIdAndUpdate(PM['galle-face-green'],   { rating:5.0, reviewCount:1 });
   console.log('✓ Reviews seeded');
 
   // ── Packages ─────────────────────────────────────────────────
+  // 6 curated tour packages, each referencing Place documents via PM{} ObjectId lookup.
+  // Package fields:
+  //   name         — display name shown on package cards and booking confirmation
+  //   description  — paragraph description of what the package covers
+  //   places       — array of Place ObjectIds; defines which places are visited
+  //                  Places are shown on the PackageDetailPage and BookingDetailPage
+  //   price        — total package price per adult in LKR
+  //   currency     — 'LKR' (Sri Lankan Rupees)
+  //   duration     — human-readable duration string
+  //   maxPeople    — maximum group size per booking
+  //   includes     — array of strings listing what the package price covers
+  //   excludes     — array of strings listing what is NOT included
+  //   coverImage   — hero image URL for the package card
+  //   rating       — initial seeded rating
+  //   category     — one of: general, cultural, scenic, family, nature, luxury
+  //   isActive     — true = publicly visible; false = hidden from ExplorePage
+  //   isFeatured   — true = shown in the Featured Packages section of the homepage
+  //   discount     — percentage discount applied to display (0 = no discount shown)
+  //   originalPrice — pre-discount price used to show the crossed-out original price
+  //                  if discount > 0; set equal to price when discount is 0
   await Package.insertMany([
+    // Package 1: Cultural Heritage Day
+    // 3 places: National Museum + Gangaramaya Temple + Viharamahadevi Park
+    // Targets history enthusiasts and first-time Colombo visitors.
+    // 10% discount applied; originalPrice 5000 → price 4500.
     {
       name: 'Colombo Cultural Heritage Day',
       description: 'Immerse yourself in Colombo\'s rich cultural and historical heritage. Visit the National Museum, the eclectic Gangaramaya Temple, and relax in Viharamahadevi Park. Ideal for history lovers and first-time visitors.',
@@ -484,6 +747,10 @@ async function seed() {
       excludes:['Personal meals','Photography permits','Souvenirs'],
       coverImage:IMG.museum1, rating:4.7, category:'cultural', isActive:true, isFeatured:true, discount:10, originalPrice:5000,
     },
+    // Package 2: Coastal Sunset Tour
+    // 3 places: Lotus Tower + Galle Face Green + Port City
+    // Evening-focused; combines iconic tower views with sunset street food.
+    // No discount; priced as a premium half-day experience.
     {
       name: 'Colombo Coastal Sunset Tour',
       description: 'Experience Colombo\'s spectacular coastline. Begin at the Lotus Tower for 360° panoramic views, stroll along Galle Face Green at sunset with famous street food, then explore the futuristic Port City waterfront.',
@@ -493,6 +760,10 @@ async function seed() {
       excludes:['Revolving restaurant booking','Personal spending'],
       coverImage:IMG.tower1, rating:4.8, category:'scenic', isActive:true, isFeatured:true, discount:0, originalPrice:5500,
     },
+    // Package 3: Family Adventure Package
+    // 3 places: Dehiwala Zoo + Water World Lanka + Galle Face Green
+    // Full day for families with children. Highest maxPeople (20) for large groups.
+    // 15% discount; originalPrice 9400 → price 8000.
     {
       name: 'Family Adventure Package',
       description: 'A packed family day out! Watch the famous elephant show at Dehiwala Zoo, cool off with thrilling slides at Water World Lanka, and finish with an evening at Galle Face Green.',
@@ -502,6 +773,11 @@ async function seed() {
       excludes:['Locker rental','Extra children tickets','Personal spending'],
       coverImage:IMG.zoo1, rating:4.5, category:'family', isActive:true, isFeatured:true, discount:15, originalPrice:9400,
     },
+    // Package 4: Nature & Eco Explorer
+    // 3 places: Beddagana Wetland + Viharamahadevi Park + Sri Lanka Planetarium
+    // Small group (maxPeople:10) — intimate guided experience.
+    // No discount; niche eco-tourism product at a lower price point.
+    // isFeatured: false — targeted niche audience.
     {
       name: 'Nature & Eco Explorer',
       description: 'Discover Colombo\'s hidden natural gems. Sunrise bird watching at the Ramsar-listed Beddagana Wetland, a peaceful stroll through Viharamahadevi Park, and a sky show at the Sri Lanka Planetarium.',
@@ -511,6 +787,11 @@ async function seed() {
       excludes:['Personal meals','Photography equipment'],
       coverImage:IMG.wetland1, rating:4.6, category:'nature', isActive:true, isFeatured:false, discount:0, originalPrice:3500,
     },
+    // Package 5: Modern Colombo VIP Experience
+    // 3 places: Cinnamon Life + Lotus Tower + Port City
+    // Evening luxury experience; smallest group (maxPeople:8).
+    // Highest price point (12000 LKR); no discount — positioned as premium.
+    // Includes personal concierge and photography session.
     {
       name: 'Modern Colombo VIP Experience',
       description: 'Experience the very best of modern Colombo in style. Visit Cinnamon Life, enjoy a panoramic dinner at the Lotus Tower, and explore the futuristic Port City waterfront at dusk.',
@@ -520,6 +801,11 @@ async function seed() {
       excludes:['Food and beverage bills','Casino entry'],
       coverImage:IMG.modern1, rating:4.4, category:'luxury', isActive:true, isFeatured:true, discount:0, originalPrice:12000,
     },
+    // Package 6: Complete Colombo Day Pass
+    // 5 places: Viharamahadevi Park + Gangaramaya Temple + Galle Face Green + National Museum + Lotus Tower
+    // The most comprehensive package — covers the 5 essential Colombo highlights.
+    // 20% discount; originalPrice 11900 → price 9500 (the largest absolute saving).
+    // Highest isFeatured priority — the flagship "everything in one day" package.
     {
       name: 'Complete Colombo Day Pass',
       description: 'The ultimate Colombo experience - five iconic stops in one comprehensive guided day tour. Perfect for first-time visitors who want to see the essential highlights.',
@@ -532,6 +818,9 @@ async function seed() {
   ]);
   console.log('✓ Packages seeded');
 
+  // ── Seed Complete: Summary Output ─────────────────────────────────────────────
+  // Print a formatted summary of all seeded credentials and data accuracy notes.
+  // This output is displayed in the terminal when the seed script completes successfully.
   console.log('\n══════════════════════════════════════');
   console.log('  DAYSCAPE v2 SEED COMPLETE ✓');
   console.log('══════════════════════════════════════');
@@ -544,8 +833,15 @@ async function seed() {
   console.log('  - Distances: calculated via Haversine formula');
   console.log('  - Opening times: based on public information');
 
+  // ── Disconnect and Exit ────────────────────────────────────────────────────────
+  // Clean disconnect from MongoDB before terminating the process.
+  // process.exit(0) signals a successful completion (exit code 0).
   await mongoose.disconnect();
   process.exit(0);
 }
 
+// ── Entry Point ───────────────────────────────────────────────────────────────────
+// Call seed() and catch any unhandled errors.
+// On error: print the error to stderr and exit with code 1 (failure signal).
+// This ensures CI/CD pipelines or shell scripts can detect seed failures.
 seed().catch(err => { console.error(err); process.exit(1); });

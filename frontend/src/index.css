@@ -1,6 +1,81 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DayScape Global Styles — Dark Elegant Colombo Theme
+   ═══════════════════════════════════════════════════════════════════════════════
+   This is the single global stylesheet for the DayScape v2 React frontend.
+   It establishes:
+     1. CSS design tokens (custom properties) for the entire colour system
+     2. A minimal box-model reset
+     3. Base typography rules (DM Sans body + Cormorant Garamond headings)
+     4. Scrollbar theming
+     5. Reusable utility classes: .container, .page-wrapper
+     6. Reusable component classes: .card, .btn, .badge, .form-*, .spinner, .toast
+     7. Layout grid helpers: .grid-2, .grid-3, .grid-4
+     8. Leaflet.js dark-mode overrides
+     9. Mobile responsive rules at 768 px breakpoint
+
+   All colour references throughout the app use CSS custom properties from :root.
+   No inline colours are used in components — always reference var(--...) tokens.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 /* DayScape Global Styles - Dark Elegant Colombo Theme */
+
+/* ── Global Box-Model Reset ──────────────────────────────────────────────────────
+   Apply border-box sizing to every element and pseudo-element.
+   Also zero out all default browser margin and padding so every component
+   starts from a clean slate regardless of browser defaults.
+   This is the standard modern CSS reset pattern.
+   ──────────────────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── CSS Design Tokens (Custom Properties) ───────────────────────────────────────
+   :root declares all design tokens as CSS custom properties so they can be
+   referenced anywhere with var(--token-name).
+
+   BACKGROUND SCALE (bg0 to bg5):
+     bg0 = darkest (#0a0c0b) — page background, deepest layer
+     bg1 = slightly lighter — sidebar/panel backgrounds
+     bg2 = card surfaces — primary card background
+     bg3 = elevated surfaces — inputs, hover states
+     bg4 = even lighter — focused inputs, active states
+     bg5 = lightest dark — borders, separators near text
+   Increment order: bg0 < bg1 < bg2 < bg3 < bg4 < bg5 (lighter with each step)
+
+   GOLD SCALE (gold to gold5):
+     gold  = #c9a84c — primary brand gold, used for buttons, active states
+     gold2 = #e8c96a — lighter gold for hover states
+     gold3 = #a07830 — darker gold for focus ring / accent lines
+     gold4 = rgba(201,168,76,0.12) — very transparent gold background for badges/highlights
+     gold5 = rgba(201,168,76,0.06) — almost invisible gold tint for subtle hover backgrounds
+
+   TEAL SCALE (teal to teal3):
+     teal  = #1db87a — success green, used for confirmed badges and teal buttons
+     teal2 = #0e8a58 — darker teal for hover/pressed
+     teal3 = rgba(29,184,122,0.12) — transparent teal for badge backgrounds
+
+   CORAL (error/danger):
+     coral  = #e05c4e — danger red, used for error states, cancelled badges
+     coral2 = rgba(224,92,78,0.12) — transparent coral for badge/error backgrounds
+
+   BLUE (informational):
+     blue  = #5ba3e8 — used for tourist/foreigner badges
+     blue2 = rgba(91,163,232,0.12) — transparent blue for badge backgrounds
+
+   TEXT SCALE (txt to txt4):
+     txt  = #e8e4dc — primary text colour (warm near-white, not harsh pure white)
+     txt2 = #a09d96 — secondary text, descriptions, metadata
+     txt3 = #6b6865 — muted text, labels, captions
+     txt4 = #3d3c3a — very muted text, nearly invisible on dark bg — used sparingly
+
+   BORDER SCALE (brd to brd3):
+     brd  = rgba(255,255,255,0.07) — default subtle border
+     brd2 = rgba(255,255,255,0.12) — slightly more visible border, used on inputs
+     brd3 = rgba(255,255,255,0.18) — clearest border, used on hover states
+
+   RADIUS SCALE:
+     radius    = 10px  — default border radius for inputs, small cards
+     radius-lg = 16px  — large cards, panels, modals
+     radius-xl = 24px  — extra large elements like hero cards
+   ──────────────────────────────────────────────────────────────────────────────── */
 :root {
   --bg0: #0a0c0b;
   --bg1: #111413;
@@ -32,8 +107,23 @@
   --radius-xl: 24px;
 }
 
+/* ── Smooth Scrolling ────────────────────────────────────────────────────────────
+   Enables CSS smooth scrolling for anchor jumps and programmatic scrollIntoView
+   calls across the entire document.
+   ──────────────────────────────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
 
+/* ── Base Body Styles ────────────────────────────────────────────────────────────
+   DM Sans is the primary sans-serif typeface for all body text, navigation,
+   and UI elements. It provides a clean, modern, highly readable base.
+   Cormorant Garamond is reserved for headings (declared below).
+
+   background: var(--bg0) — deepest dark layer, used as the page canvas
+   color: var(--txt) — warm near-white primary text colour
+   min-height: 100vh — ensures the background covers even short pages
+   line-height: 1.6 — comfortable reading spacing for body paragraphs
+   -webkit-font-smoothing: antialiased — improves font rendering on macOS/iOS
+   ──────────────────────────────────────────────────────────────────────────────── */
 body {
   font-family: 'DM Sans', sans-serif;
   background: var(--bg0);
@@ -44,6 +134,23 @@ body {
 }
 
 /* Typography */
+
+/* ── Heading Typography ───────────────────────────────────────────────────────────
+   All h1–h6 use Cormorant Garamond, a classical serif font that gives DayScape
+   its luxury, editorial feel. Headings sit in contrast with the DM Sans body text
+   to create a clear visual hierarchy.
+
+   font-weight: 600 — semi-bold for elegance without being too heavy
+   line-height: 1.2 — tighter than body text; headings read best with less spacing
+
+   Fluid font sizes using clamp(min, preferred, max):
+   h1: clamp(2rem, 5vw, 3.5rem) — large hero headings, fluid between 32px and 56px
+   h2: clamp(1.5rem, 3vw, 2.5rem) — section headings, fluid between 24px and 40px
+   h3: clamp(1.2rem, 2vw, 1.8rem) — subsection headings, fluid between 19px and 29px
+
+   p: var(--txt2) — body paragraphs use secondary muted text colour by default
+   a: no text-decoration, inherits colour — links are styled by their context class
+   ──────────────────────────────────────────────────────────────────────────────── */
 h1,h2,h3,h4,h5,h6 { font-family: 'Cormorant Garamond', serif; font-weight: 600; line-height: 1.2; }
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
 h2 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
@@ -52,15 +159,48 @@ p { color: var(--txt2); }
 a { text-decoration: none; color: inherit; }
 
 /* Scrollbar */
+
+/* ── Custom Scrollbar ────────────────────────────────────────────────────────────
+   WebKit scrollbar customisation (works in Chrome, Edge, Safari).
+   The narrow 6px width keeps the scrollbar unobtrusive on dark backgrounds.
+   The thumb uses --bg4 (the mid-range background token) so it's visible but subtle.
+   Track matches --bg1 to blend with panel backgrounds.
+   ──────────────────────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg1); }
 ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
 
 /* Layout */
+
+/* ── .container ──────────────────────────────────────────────────────────────────
+   Standard full-width-to-max-width container used by all page layouts.
+   max-width: 1200px — keeps content readable on wide monitors
+   margin: 0 auto — centres horizontally
+   padding: 0 1.5rem — horizontal gutters; reduced to 1rem on mobile via @media
+   ──────────────────────────────────────────────────────────────────────────────── */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── .page-wrapper ───────────────────────────────────────────────────────────────
+   Applied to the outermost div of every page component.
+   padding-top: 70px — offsets content below the fixed navbar (70px height).
+   min-height: 100vh — ensures background colour fills the viewport even on short pages.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .page-wrapper { padding-top: 70px; min-height: 100vh; }
 
 /* Cards */
+
+/* ── .card ───────────────────────────────────────────────────────────────────────
+   The primary content container used throughout the app for place cards,
+   booking summaries, form panels, stat cards, and more.
+
+   background: var(--bg2) — second-tier background, lifted off the page canvas
+   border: 1px solid var(--brd) — subtle separator border (7% white opacity)
+   border-radius: var(--radius-lg) — 16px rounded corners for a modern soft look
+   padding: 1.5rem — generous internal spacing
+   transition: border-color 0.2s — smooth hover border highlight
+
+   .card:hover brightens the border to var(--brd2) (12% white) for interactivity cue.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .card {
   background: var(--bg2);
   border: 1px solid var(--brd);
@@ -71,6 +211,39 @@ a { text-decoration: none; color: inherit; }
 .card:hover { border-color: var(--brd2); }
 
 /* Buttons */
+
+/* ── .btn — Base Button ──────────────────────────────────────────────────────────
+   All buttons share this base class for layout and typography.
+   display: inline-flex with align-items: center and gap: 0.5rem handles icon+text
+   layout elegantly without additional markup.
+
+   border-radius: 100px — fully rounded pill shape (DayScape design signature)
+   font-family: 'DM Sans' — explicitly set because buttons inherit their parent font
+                             and headings use Cormorant which must not leak into buttons
+   font-size: 0.875rem / font-weight: 600 — compact, readable, semi-bold
+   letter-spacing: 0.3px — slight tracking improves button label legibility
+   white-space: nowrap — prevents button text from wrapping on narrow screens
+   transition: all 0.15s — snappy feedback on hover/press
+
+   ── Button Colour Variants ──
+   .btn-gold    — Primary CTA: gold background (#c9a84c), near-black text (#1a1200)
+                  Hover: lighter gold (#e8c96a). Used for Save, Book Now, Submit.
+   .btn-outline — Secondary: transparent with visible border, grey text.
+                  Hover: slight bg3 background fill. Used alongside gold buttons.
+   .btn-teal    — Success/Confirm: teal background, black text.
+                  Hover: brighter teal (#25d48e). Used for Approve, Confirm actions.
+   .btn-danger  — Destructive: transparent coral-tinted background, coral text.
+                  Hover: solid coral fill with white text. Used for Hide, Delete.
+   .btn-ghost   — Neutral: bg3 background, muted txt2 colour.
+                  Hover: bg4 with txt colour. Used for Cancel, Edit, secondary actions.
+
+   ── Button Size Modifiers ──
+   .btn-sm  — compact (0.4rem padding, 0.78rem text) — used in table action columns
+   .btn-lg  — large (0.85rem padding, 1rem text) — hero CTAs
+   .btn-block — full-width with centred content — used for form submit buttons
+
+   .btn:disabled — opacity 0.5, cursor not-allowed — prevents interaction when loading
+   ──────────────────────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.65rem 1.5rem; border-radius: 100px;
@@ -94,6 +267,41 @@ a { text-decoration: none; color: inherit; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Form elements */
+
+/* ── Form Component Classes ──────────────────────────────────────────────────────
+   Consistent form styling used in all auth pages, admin CRUD forms,
+   booking flow, payment form, planner, and review submission.
+
+   .form-group:
+     flex column with 0.4rem gap for label → input stacking
+     margin-bottom: 1rem creates even vertical rhythm between fields
+
+   .form-label:
+     Uppercase, tracked, 0.78rem — compact informational label above each input
+     color: var(--txt3) — muted label text to reduce visual weight vs field content
+
+   .form-input:
+     Full width, comfortable 0.75rem 1rem padding
+     background: var(--bg3) / border: 1px solid var(--brd2) — elevated above page
+     color: var(--txt) — clear text, DM Sans family
+     outline: none — remove default browser outline (replaced by border-color focus)
+     transition: border-color 0.15s — smooth focus highlight
+     :focus — border brightens to var(--gold3), bg steps up to var(--bg4)
+     ::placeholder — var(--txt3) muted placeholder colour
+
+   .form-select:
+     Extends .form-input with a custom dropdown chevron SVG injected via
+     background-image (inline data URI). appearance: none removes the native
+     browser dropdown arrow. padding-right: 2.5rem makes room for the chevron.
+
+   .form-textarea:
+     resize: vertical — allows user to resize height but not width
+     min-height: 100px — sensible default height for multi-line text areas
+
+   .form-error:
+     Below-field error message: coral colour, 0.8rem, small top margin
+     Used by the Err inner component in PaymentPage and direct error renders
+   ──────────────────────────────────────────────────────────────────────────────── */
 .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
 .form-label { font-size: 0.78rem; font-weight: 600; color: var(--txt3); letter-spacing: 0.4px; text-transform: uppercase; }
 .form-input {
@@ -110,6 +318,25 @@ a { text-decoration: none; color: inherit; }
 .form-error { color: var(--coral); font-size: 0.8rem; margin-top: 0.2rem; }
 
 /* Badges */
+
+/* ── Badge Component ─────────────────────────────────────────────────────────────
+   Inline pill labels used for status, type, and category indicators throughout
+   booking lists, admin tables, user profiles, and place cards.
+
+   Base .badge:
+     inline-flex with gap — supports optional emoji/icon prefix before the label text
+     border-radius: 100px — pill shape consistent with buttons
+     font-size: 0.72rem, font-weight: 600 — compact but legible, semi-bold text
+
+   Colour variants (each uses transparent background + matching text + subtle border):
+   .badge-gold  — pending/pricing — uses gold4 bg + gold2 text + 20% gold border
+   .badge-teal  — confirmed/local — uses teal3 bg + teal text + 20% teal border
+   .badge-coral — cancelled/error — uses coral2 bg + coral text + 20% coral border
+   .badge-blue  — foreigner/tourist — uses blue2 bg + blue text + 20% blue border
+
+   The transparent + border approach keeps badges from visually overpowering the
+   surrounding content while still providing clear colour-coded status at a glance.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center; gap: 0.3rem;
   padding: 0.25rem 0.75rem; border-radius: 100px;
@@ -121,28 +348,104 @@ a { text-decoration: none; color: inherit; }
 .badge-blue { background: var(--blue2); color: var(--blue); border: 1px solid rgba(91,163,232,0.2); }
 
 /* Star rating */
+
+/* ── Star Rating ─────────────────────────────────────────────────────────────────
+   Used in place cards and review displays to render ★ star characters in gold.
+   .stars — standard 0.85rem size for compact cards and tables
+   .stars-lg — 1.1rem for larger detail page rating displays
+   Both use var(--gold) matching the brand gold accent colour.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .stars { color: var(--gold); font-size: 0.85rem; }
 .stars-lg { color: var(--gold); font-size: 1.1rem; }
 
 /* Section */
+
+/* ── Page Section Helpers ────────────────────────────────────────────────────────
+   .section — vertical padding 4rem top/bottom; used for homepage section blocks
+   .section-title — applies Cormorant Garamond and bottom margin to section headings
+   .section-sub — muted 0.9rem subtitle below section titles, with bottom spacing
+   Both reduced on mobile (padding drops to 2.5rem) via the @media rule below.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .section { padding: 4rem 0; }
 .section-title { font-family: 'Cormorant Garamond', serif; margin-bottom: 0.5rem; }
 .section-sub { color: var(--txt3); font-size: 0.9rem; margin-bottom: 2.5rem; }
 
 /* Grid */
+
+/* ── Responsive Auto-Fill Grids ──────────────────────────────────────────────────
+   Three grid helpers using auto-fill with minmax for responsive column counts.
+   All use gap: 1.25rem (or 1rem for grid-4).
+
+   .grid-2 — min column width 280px — suited for 2-column place cards on desktop
+   .grid-3 — min column width 220px — suited for 3-column cards on desktop
+   .grid-4 — min column width 180px — suited for 4-column tighter grids
+
+   auto-fill behaviour:
+   - 4 cols at 1200px container width, 3 cols at ~900px, 2 cols at ~600px, 1 at mobile
+   - Exact breakpoints depend on the min width constant and container padding
+   ──────────────────────────────────────────────────────────────────────────────── */
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
 .grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
 
 /* Gold divider */
+
+/* ── Gold Decorative Divider ─────────────────────────────────────────────────────
+   A short horizontal line in the brand gold colour, used as a visual accent
+   below page titles and section headings.
+   height: 2px, width: 60px — thin and short, purely decorative
+   background: var(--gold) — matches the primary gold brand colour
+   margin: 0.5rem 0 1.5rem — small top gap, larger bottom gap before content
+   ──────────────────────────────────────────────────────────────────────────────── */
 .gold-divider { height: 2px; width: 60px; background: var(--gold); margin: 0.5rem 0 1.5rem; }
 
 /* Loading */
+
+/* ── Loading Spinner ─────────────────────────────────────────────────────────────
+   A CSS-only circular spinner used during async data loads throughout the app.
+
+   .spinner:
+     36×36px circle; 3px border in var(--bg4) on three sides and var(--gold) on top
+     The single gold border-top creates the spinning arc effect visually.
+     animation: spin 0.8s linear infinite — smooth continuous rotation
+
+   @keyframes spin:
+     Simple 360° rotation from 0 to 360 degrees
+
+   .loading-center:
+     Full-width centred flex container with min-height 300px.
+     Used to vertically and horizontally centre the spinner + optional loading text.
+     gap: 1rem separates the spinner from any label text below it.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .spinner { width: 36px; height: 36px; border: 3px solid var(--bg4); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-center { display: flex; align-items: center; justify-content: center; min-height: 300px; flex-direction: column; gap: 1rem; }
 
 /* Toast/Notification */
+
+/* ── Toast Notification System ───────────────────────────────────────────────────
+   Used by ToastContext to render success/error/info notifications.
+   Rendered via a portal or a fixed-position container outside normal page flow.
+
+   .toast-container:
+     Fixed position at bottom-right (2rem from each edge), above all content (z-index 9999)
+     flex-column with gap: 0.75rem stacks multiple simultaneous toasts vertically
+
+   .toast:
+     bg3 background with brd2 border — elevated card appearance
+     min-width: 280px / max-width: 380px — readable but not screen-dominating
+     flex row with gap: 0.75rem for icon + message layout
+     animation: slideIn 0.3s ease — slides in from the right edge
+
+   Variant left-border colours (3px solid left border only):
+   .toast-success — var(--teal) green left border
+   .toast-error   — var(--coral) red left border
+   .toast-info    — var(--gold) gold left border
+
+   @keyframes slideIn:
+     Enters from translateX(100%) opacity:0 → translateX(0) opacity:1
+     Creates the slide-in-from-right entrance animation
+   ──────────────────────────────────────────────────────────────────────────────── */
 .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; }
 .toast {
   background: var(--bg3); border: 1px solid var(--brd2); border-radius: var(--radius);
@@ -157,20 +460,88 @@ a { text-decoration: none; color: inherit; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 /* Navigation */
+
+/* ── Active Navigation Link ──────────────────────────────────────────────────────
+   Applied by Navbar to the currently active route link via NavLink's activeClassName
+   or a manual class toggle. Forces gold colour on the active nav item.
+   !important ensures it overrides any inherited or component-level colour.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .nav-active { color: var(--gold) !important; }
 
 /* Divider */
+
+/* ── Horizontal Divider ──────────────────────────────────────────────────────────
+   A full-width 1px hairline separator using the default border token --brd (7% white).
+   Used throughout detail pages and admin panels to visually separate content blocks.
+   margin: 1.5rem 0 provides comfortable vertical spacing above and below.
+   ──────────────────────────────────────────────────────────────────────────────── */
 .divider { height: 1px; background: var(--brd); margin: 1.5rem 0; }
 
 /* Image cover */
+
+/* ── .img-cover — Object-Fit Cover Image ─────────────────────────────────────────
+   Applied to <img> elements inside fixed-height containers to ensure the image
+   fills the container completely without letterboxing.
+   object-fit: cover — crops the image to fill without distortion
+   display: block — removes the default inline bottom gap that browsers add to images
+   width/height: 100% — stretches to fill the parent container dimensions
+   ──────────────────────────────────────────────────────────────────────────────── */
 .img-cover { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* Empty state */
+
+/* ── Empty State Component ───────────────────────────────────────────────────────
+   Displayed when a list, search, or data fetch returns zero results.
+   Used in BookingsPage, AdminUsers, AdminPlaces, etc. for zero-result states.
+
+   .empty-state — centred text, 3rem padding, muted txt3 colour as default
+   .empty-state-icon — large emoji icon (3.5rem), 50% opacity to appear ghostly/subtle
+   .empty-state h3 — uses DM Sans (not Cormorant) for slightly casual empty-state tone
+                     mid-tone txt2 colour; slightly smaller than standard h3
+   ──────────────────────────────────────────────────────────────────────────────── */
 .empty-state { text-align: center; padding: 3rem 1rem; color: var(--txt3); }
 .empty-state-icon { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
 .empty-state h3 { font-family: 'DM Sans', sans-serif; color: var(--txt2); font-size: 1.1rem; margin-bottom: 0.5rem; }
 
 /* Leaflet map override for dark theme */
+
+/* ── Leaflet.js Dark Theme Overrides ─────────────────────────────────────────────
+   Leaflet is the map library used in PlannerPage, PlanDetailPage, and
+   BookingDetailPage via React-Leaflet. By default Leaflet renders with a light
+   theme that clashes badly with DayScape's dark design. These overrides force
+   all Leaflet elements into the dark token system.
+
+   .leaflet-container:
+     Deep dark green-black background (#0d1a13) for the map canvas — matches the
+     theme while providing contrast against map tiles.
+     border-radius: var(--radius-lg) — rounds the map container to 16px.
+     !important required to override Leaflet's inline styles.
+
+   .leaflet-popup-content-wrapper:
+     Override the white popup bubble with bg3 background, txt text, brd2 border.
+     border-radius: var(--radius) — matches the app's 10px corner radius.
+     box-shadow: none — removes Leaflet's default drop shadow that looks odd in dark.
+     !important on all properties to guarantee override.
+
+   .leaflet-popup-tip:
+     The small triangle pointing from popup to marker. Must match the popup bg (bg3).
+
+   .leaflet-control-zoom:
+     Zoom +/- button container — override default white rounded rectangle with dark theme.
+
+   .leaflet-control-zoom a:
+     Each zoom button: bg3 background, txt2 text colour, brd border.
+
+   .leaflet-control-zoom a:hover:
+     Hovering a zoom button: bg4 background, brighter txt text.
+
+   .leaflet-tile-pane:
+     The actual map tiles layer. Applies a CSS filter to darken and desaturate
+     the OpenStreetMap tiles so they blend with the dark theme:
+     brightness(0.7) — reduces tile brightness by 30%
+     saturate(0.6)   — reduces saturation by 40% for a more muted palette
+     hue-rotate(10deg) — slight blue shift to make the map feel cooler/darker
+   ──────────────────────────────────────────────────────────────────────────────── */
 .leaflet-container { background: #0d1a13 !important; border-radius: var(--radius-lg); }
 .leaflet-popup-content-wrapper { background: var(--bg3) !important; color: var(--txt) !important; border: 1px solid var(--brd2) !important; border-radius: var(--radius) !important; box-shadow: none !important; }
 .leaflet-popup-tip { background: var(--bg3) !important; }
@@ -180,6 +551,23 @@ a { text-decoration: none; color: inherit; }
 .leaflet-tile-pane { filter: brightness(0.7) saturate(0.6) hue-rotate(10deg); }
 
 /* Responsive */
+
+/* ── Mobile Responsive Breakpoint (max-width: 768px) ─────────────────────────────
+   Applied on tablet and smaller screens (max-width 768px).
+
+   .hide-mobile:
+     Hides elements that are not appropriate for small screens.
+     !important ensures override even when inline styles compete.
+     Used by the Navbar for desktop-only links, and table columns in admin views.
+
+   .container:
+     Reduces side padding from 1.5rem to 1rem — reclaims 16px of side space
+     on narrow screens where every pixel counts.
+
+   .section:
+     Reduces vertical padding from 4rem to 2.5rem on mobile — keeps content
+     from being too spaced out on smaller viewport heights.
+   ──────────────────────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .hide-mobile { display: none !important; }
   .container { padding: 0 1rem; }

@@ -1,15 +1,65 @@
+/* ═══════════════════════════════════════════════════════════════
+   BookingDetail.module.css — Booking Detail Page Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by BookingDetailPage.jsx at /user/bookings/:id.
+   Shows the full breakdown of a single booking:
+     Left column  — booking reference, info grid, plan itinerary,
+                    trip summary, transport mode grid
+     Right column (sticky) — action buttons (Download PDF, etc.)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   Standard 2rem top / 4rem bottom padding within the .container.
+   ──────────────────────────────────────────────────────────────── */
 .page { padding: 2rem 0 4rem; }
+
+/* ── Two-Column Layout ───────────────────────────────────────────
+   .layout — 1fr + 310px grid; align-items: start prevents the sidebar
+             from stretching to match the left column height
+   .left   — flex column; receives the main content sections
+   .right  — position: sticky at top: 88px (66px navbar + 22px buffer)
+             so the action buttons stay visible while scrolling
+   ──────────────────────────────────────────────────────────────── */
 .layout { display: grid; grid-template-columns: 1fr 310px; gap: 1.75rem; align-items: start; }
 .left { display: flex; flex-direction: column; }
 .right { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 0; }
+
+/* ── Booking Header ──────────────────────────────────────────────
+   .bookingHd     — flex row: reference number left, total amount right
+   .bookingRef    — large Cormorant serif booking ID (e.g. "BK-20240512")
+                    gold colour makes it visually prominent
+   .bookingAmount — right-aligned total cost display
+   ──────────────────────────────────────────────────────────────── */
 .bookingHd { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; }
 .bookingRef { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--gold); font-weight: 700; letter-spacing: 0.5px; }
 .bookingAmount { text-align: right; }
+
+/* ── Info Grid ───────────────────────────────────────────────────
+   .infoGrid — 2-column equal grid of info boxes (date, guests, type, status)
+   .infoBox  — bg3 card with radius padding
+   .infoL    — tiny uppercase txt4 label (e.g. "DATE", "GUESTS")
+   .infoV    — bold txt value (e.g. "12 May 2024", "2 Adults, 1 Child")
+   ──────────────────────────────────────────────────────────────── */
 .infoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .infoBox { background: var(--bg3); border-radius: var(--radius); padding: 0.75rem 0.9rem; }
 .infoL { font-size: 0.7rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
 .infoV { font-size: 0.875rem; font-weight: 600; color: var(--txt); }
+
+/* ── Section Title ───────────────────────────────────────────────
+   Cormorant serif heading used above each content block (itinerary,
+   transport modes, trip summary).
+   ──────────────────────────────────────────────────────────────── */
 .sectionTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--txt); margin-bottom: 1rem; }
+
+/* ── Plan Itinerary Stop List ────────────────────────────────────
+   .stopList — flex column with no gap (top border of .stop acts as divider)
+   .stop     — flex row: numbered circle + thumbnail + info; padding 0.85rem 0
+   .stopNum  — 28px gold circle with the stop index
+   .stopImg  — 70×60px rounded thumbnail; bg3 fallback while loading
+   .stopInfo — flex: 1 column for name + meta
+   .stopName — bold place name
+   .stopMeta — flex row of time/distance chips in txt3
+   ──────────────────────────────────────────────────────────────── */
 .stopList { display: flex; flex-direction: column; }
 .stop { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 0; }
 .stopNum { width: 28px; height: 28px; border-radius: 50%; background: var(--gold4); border: 1px solid var(--gold3); color: var(--gold2); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -17,10 +67,30 @@
 .stopInfo { flex: 1; }
 .stopName { font-size: 0.9rem; font-weight: 600; color: var(--txt); margin-bottom: 3px; }
 .stopMeta { display: flex; flex-wrap: wrap; gap: 0.65rem; font-size: 0.75rem; color: var(--txt3); }
+
+/* ── Trip Summary Bar ────────────────────────────────────────────
+   .tripSummary  — bg3 flex row: total distance + duration + cost chips
+                   flex-wrap so items stack on narrow viewports
+   .summaryItem  — flex column: label above, value below
+   .sLabel       — tiny uppercase txt3 label
+   .sVal         — Cormorant gold serif value (e.g. "42 km", "LKR 3,500")
+   ──────────────────────────────────────────────────────────────── */
 .tripSummary { display: flex; gap: 1.5rem; padding: 0.85rem 1rem; background: var(--bg3); border-radius: var(--radius); margin-top: 1rem; flex-wrap: wrap; }
 .summaryItem { display: flex; flex-direction: column; gap: 2px; }
 .sLabel { font-size: 0.7rem; color: var(--txt3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
 .sVal { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--gold); font-weight: 700; }
+
+/* ── Transport Mode Grid ─────────────────────────────────────────
+   .modeGrid  — 5-column equal grid for the 5 transport mode cards
+               (Car, Tuk-tuk, Bus, Train, Bicycle)
+   .modeCard  — bg3 card; centred text layout
+   .modeIcon  — 1.5rem transport emoji
+   .modeLabel — tiny transport type label (txt3)
+   .modeDur   — bold travel time (e.g. "1h 20m")
+   .modeCost  — gold3 estimated cost below the duration
+   .modeApps  — flex row of ride-app chips (e.g. "PickMe", "Uber")
+   .appChip   — tiny gold4/gold3 pill badge for each app name
+   ──────────────────────────────────────────────────────────────── */
 .modeGrid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.65rem; }
 .modeCard { background: var(--bg3); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 0.85rem 0.5rem; text-align: center; }
 .modeIcon { font-size: 1.5rem; margin-bottom: 0.3rem; }
@@ -29,6 +99,18 @@
 .modeCost { font-size: 0.72rem; color: var(--gold3); margin-top: 2px; }
 .modeApps { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; margin-top: 4px; }
 .appChip { background: var(--gold4); color: var(--gold3); padding: 1px 6px; border-radius: 100px; font-size: 0.62rem; font-weight: 600; }
+
+/* ── Action Buttons Column ───────────────────────────────────────
+   .actionGrid — flex column of action buttons with 0.65rem gap
+                 rendered in the sticky right column
+   ──────────────────────────────────────────────────────────────── */
 .actionGrid { display: flex; flex-direction: column; gap: 0.65rem; }
+
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   1024px — two-column layout collapses to single column; right panel
+            loses sticky positioning; modeGrid drops to 3 columns;
+            infoGrid collapses to single column
+   480px  — modeGrid drops to 2 columns
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .right { position: static; } .modeGrid { grid-template-columns: repeat(3,1fr); } .infoGrid { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .modeGrid { grid-template-columns: repeat(2,1fr); } }

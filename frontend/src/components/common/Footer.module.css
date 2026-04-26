@@ -1,14 +1,66 @@
+/* ═══════════════════════════════════════════════════════════════
+   Footer.module.css — Site-Wide Footer Styles
+   ═══════════════════════════════════════════════════════════════
+   Rendered by Footer.jsx at the bottom of every public page.
+   Four-column layout: brand column (2fr) + three link columns (1fr each).
+   Collapses to 2×2 grid at 768px and single column at 480px.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Footer Shell ────────────────────────────────────────────────
+   bg1 background — one step lighter than bg0 to visually separate
+   the footer from the main page canvas.
+   border-top: 1px brd creates a subtle dividing line above the footer.
+   padding: 3.5rem 0 1.5rem — generous top space, tighter at bottom.
+   margin-top: 4rem — pushes footer away from page content.
+   ──────────────────────────────────────────────────────────────── */
 .footer { background: var(--bg1); border-top: 1px solid var(--brd); padding: 3.5rem 0 1.5rem; margin-top: 4rem; }
+
+/* ── Column Grid ─────────────────────────────────────────────────
+   2fr 1fr 1fr 1fr — brand column is twice as wide as each link column.
+   gap: 2.5rem — breathing room between columns.
+   margin-bottom: 2.5rem — space between the columns and the bottom bar.
+   ──────────────────────────────────────────────────────────────── */
 .grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
+
+/* ── Brand Column ────────────────────────────────────────────────
+   .logo    — DayScape brand mark; Cormorant Garamond serif heading
+   .logo em — "Scape" part rendered in gold italic (matches Navbar style)
+   .tagline — short descriptive sentence; txt3 muted, 1.6 line-height
+   .ref     — tiny reference-point text (address/coordinates); txt4 subdued
+   ──────────────────────────────────────────────────────────────── */
 .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--txt); margin-bottom: 0.75rem; }
 .logo em { color: var(--gold); font-style: italic; }
 .tagline { font-size: 0.85rem; color: var(--txt3); line-height: 1.6; margin-bottom: 0.5rem; }
 .ref { font-size: 0.78rem; color: var(--txt4); }
+
+/* ── Column Headings ─────────────────────────────────────────────
+   .colTitle — DM Sans (body font, not serif) for column section headers
+               gold3 colour + uppercase + letter-spacing gives a premium label look
+               8px letter-spacing is tighter than section labels elsewhere (0.8px)
+   ──────────────────────────────────────────────────────────────── */
 .colTitle { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--gold3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1rem; }
+
+/* ── Link Lists ──────────────────────────────────────────────────
+   .linkList          — vertical flex list; list-style: none removes bullets
+   .linkList li a     — anchor links; txt3 default, gold on hover
+   .linkList li span  — non-link items (e.g. "Coming Soon"); same styling but cursor: default
+   Both transition over 0.15s for a smooth colour change on hover.
+   ──────────────────────────────────────────────────────────────── */
 .linkList { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
 .linkList li a, .linkList li span { font-size: 0.875rem; color: var(--txt3); transition: color 0.15s; cursor: pointer; }
 .linkList li a:hover { color: var(--gold); }
+
+/* ── Bottom Bar ──────────────────────────────────────────────────
+   .bottom   — horizontal rule + copyright line at the very bottom
+               border-top separates it from the column grid above
+   .bottom p — tiny txt4 text showing "© {year} DayScape" auto-generated in JSX
+   ──────────────────────────────────────────────────────────────── */
 .bottom { border-top: 1px solid var(--brd); padding-top: 1.25rem; text-align: center; }
 .bottom p { font-size: 0.78rem; color: var(--txt4); }
+
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   768px — 4-column grid reflows to 2-column (1fr 1fr) to keep columns readable
+   480px — 2-column collapses to single column for very small phones
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) { .grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
 @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }

@@ -1,3 +1,18 @@
+/* ═══════════════════════════════════════════════════════════════
+   Navbar.module.css — Top Navigation Bar Styles
+   ═══════════════════════════════════════════════════════════════
+   Fixed position bar at the top of every public page.
+   Adapts to guest vs logged-in state via conditional JSX in Navbar.jsx.
+   Breakpoint: collapses to hamburger menu at ≤900px.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Nav Bar Shell ───────────────────────────────────────────────
+   Fixed at the top of the viewport so it stays visible on scroll.
+   z-index: 1000 places it above all page content including dropdowns.
+   backdrop-filter: blur(14px) creates the frosted-glass dark effect.
+   rgba(10,12,11,0.94) — semi-transparent bg0 preserves the blur effect.
+   height: 66px — the fixed navbar height referenced by .page-wrapper padding-top.
+   ──────────────────────────────────────────────────────────────── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
   background: rgba(10, 12, 11, 0.94);
@@ -5,10 +20,21 @@
   border-bottom: 1px solid var(--brd);
   height: 66px;
 }
+
+/* ── Inner Container ─────────────────────────────────────────────
+   Max-width 1200px centred, matching the .container utility class.
+   height: 100% + flex + align-items: center vertically centres all children.
+   ──────────────────────────────────────────────────────────────── */
 .inner {
   max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
   height: 100%; display: flex; align-items: center; gap: 0.5rem;
 }
+
+/* ── Logo ────────────────────────────────────────────────────────
+   DayScape brand mark: "Day" in txt + "Scape" in gold italic.
+   flex-shrink: 0 prevents the logo from collapsing when nav links push it.
+   white-space: nowrap ensures it never wraps across lines.
+   ──────────────────────────────────────────────────────────────── */
 .logo {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.45rem; font-weight: 700;
@@ -17,6 +43,11 @@
 }
 .logo em { color: var(--gold); font-style: italic; }
 
+/* ── Navigation Links ────────────────────────────────────────────
+   .links     — flex row; flex: 1 fills available space between logo and actions
+   .link      — pill-shaped nav item; txt2 default, gold5 background on active
+   .linkActive — applied by NavLink when the current route matches; gold + gold5 bg
+   ──────────────────────────────────────────────────────────────── */
 .links { display: flex; align-items: center; gap: 2px; flex: 1; }
 .link {
   padding: 0.4rem 0.85rem; border-radius: 100px;
@@ -26,10 +57,23 @@
 .link:hover { color: var(--txt); background: var(--bg3); }
 .linkActive { color: var(--gold2) !important; background: var(--gold5) !important; }
 
+/* ── Right-Side Actions ──────────────────────────────────────────
+   .actions      — flex row of the cart button, user menu, and hamburger
+                   margin-left: auto pushes it to the far right
+   .hideOnMobile — empty class (the hide is via the @media rule below)
+   ──────────────────────────────────────────────────────────────── */
 .actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; flex-shrink: 0; }
 .hideOnMobile { }
 
 /* Cart button */
+
+/* ── Cart Button ─────────────────────────────────────────────────
+   .cartBtn   — 36px circle button containing the 🛒 emoji
+                bg3 background + brd2 border; gold hover state
+   .cartBadge — absolute-positioned red circle showing item count
+                positioned top-right of the cart button
+                only rendered when cartCount > 0 in Navbar.jsx
+   ──────────────────────────────────────────────────────────────── */
 .cartBtn {
   position: relative; width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
@@ -48,6 +92,21 @@
 }
 
 /* User menu */
+
+/* ── User Avatar & Dropdown ─────────────────────────────────────
+   .userMenu    — relative wrapper; provides positioning context for the dropdown
+   .avatar      — pill button showing initials circle + first name + chevron
+                  bg3 + brd2 border; gold border on hover
+   .avatarInitials — 28px gold-tinted circle containing the user's first letter
+   .chevron     — ▾ dropdown indicator arrow
+
+   .dropdown    — absolute dropdown panel that appears on hover (mouseEnter/Leave)
+                  bg3 background; large box-shadow for depth; overflow: hidden clips corners
+                  z-index: 200 — above page content but below the main navbar (z:1000)
+   .dropItem    — full-width flex link/button; bg4 + txt on hover
+   .dropDivider — 1px horizontal separator between nav items and logout
+   .dropLogout  — coral text to visually flag the destructive sign-out action
+   ──────────────────────────────────────────────────────────────── */
 .userMenu { position: relative; }
 .avatar {
   display: flex; align-items: center; gap: 0.5rem;
@@ -86,6 +145,15 @@
 .dropLogout:hover { background: var(--coral2) !important; }
 
 /* Hamburger */
+
+/* ── Hamburger Button (mobile only) ─────────────────────────────
+   Hidden on desktop (display: none); shown via @media at ≤900px.
+   Three <span> elements styled as horizontal bars.
+   .hamburgerOpen animates the three bars into an X icon:
+     span:1 — rotates +45° and translates down
+     span:2 — fades out (opacity: 0)
+     span:3 — rotates -45° and translates up
+   ──────────────────────────────────────────────────────────────── */
 .hamburger {
   display: none; flex-direction: column; gap: 5px;
   background: none; border: none; cursor: pointer; padding: 4px;
@@ -95,6 +163,13 @@
 .hamburgerOpen span:nth-child(2) { opacity: 0; }
 .hamburgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* ── Mobile Responsive (≤900px) ─────────────────────────────────
+   The hamburger button becomes visible.
+   .hideOnMobile hides desktop-only elements (e.g. Sign In text button).
+   .links transforms from a horizontal row into a full-width vertical
+   overlay panel just below the navbar (top: 66px), hidden by default.
+   .links.open reveals the panel when hamburger is clicked.
+   ──────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .hamburger { display: flex; }
   .hideOnMobile { display: none !important; }

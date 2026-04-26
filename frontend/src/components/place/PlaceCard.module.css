@@ -1,8 +1,44 @@
+/* ═══════════════════════════════════════════════════════════════
+   PlaceCard.module.css — Place Grid Card Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by PlaceCard.jsx which renders in place grids on:
+     HomePage (featured + nearby + category sections)
+     ExplorePage (main results grid)
+     FavoritesPage (saved places grid)
+   Each card is a vertical flex column: image → body → footer.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Card Shell ──────────────────────────────────────────────────
+   .card       — bg2 surface with radius-lg corners; flex column so
+                 the body expands to fill remaining height
+   .card:hover — lifts 3px upward + stronger brd2 border on hover
+                 transition: all 0.2s covers both transform and border-color
+   ──────────────────────────────────────────────────────────────── */
 .card { display:flex; flex-direction:column; background:var(--bg2); border:1px solid var(--brd); border-radius:var(--radius-lg); overflow:hidden; transition:all 0.2s; cursor:pointer; }
 .card:hover { border-color:var(--brd2); transform:translateY(-3px); }
+
+/* ── Image Section ───────────────────────────────────────────────
+   .imgWrap       — fixed 185px height container; overflow: hidden clips the
+                    zoomed image on hover; flex-shrink: 0 prevents collapse
+   .img           — cover-fit fills the wrapper; scale(1.04) on card hover
+                    creates a subtle Ken Burns-style zoom effect
+   ──────────────────────────────────────────────────────────────── */
 .imgWrap { position:relative; height:185px; overflow:hidden; flex-shrink:0; }
 .img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
 .card:hover .img { transform:scale(1.04); }
+
+/* ── Overlay Badges ──────────────────────────────────────────────
+   All badges are absolute-positioned over the card image.
+
+   .distBadge  — bottom-right pill: distance from user's live GPS location
+                 dark semi-transparent bg + gold2 text for legibility
+   .crowdBadge — bottom-left pill: crowd level indicator (low/mid/high)
+                 three colour variants below (.crowd_low/.crowd_mid/.crowd_high)
+   .featBadge  — top-left: "Featured" label on promoted places
+                 gold4 background with gold2 text and subtle border
+   .favBtn     — top-right heart button; filled coral bg when active (.favBtnOn)
+                 dark semi-transparent bg so it's visible over any image
+   ──────────────────────────────────────────────────────────────── */
 .distBadge { position:absolute; bottom:7px; right:7px; background:rgba(10,12,11,0.88); color:var(--gold2); padding:2px 8px; border-radius:100px; font-size:0.7rem; font-weight:700; }
 .crowdBadge { position:absolute; bottom:7px; left:7px; padding:2px 8px; border-radius:100px; font-size:0.69rem; font-weight:600; }
 .crowd_low  { background:rgba(29,184,122,0.18); color:var(--teal); }
@@ -12,6 +48,17 @@
 .favBtn { position:absolute; top:7px; right:7px; background:rgba(10,12,11,0.72); border:none; border-radius:50%; width:28px; height:28px; font-size:0.88rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
 .favBtn:hover { background:rgba(224,92,78,0.6); }
 .favBtnOn { background:rgba(224,92,78,0.4) !important; }
+
+/* ── Card Body ───────────────────────────────────────────────────
+   .body    — flex column with 0.3rem gap; flex: 1 lets it grow to fill card
+   .catRow  — flex row for category icon + name
+   .catName — uppercase tiny label; txt3 muted
+   .name    — Cormorant Garamond serif place name; 1.08rem bold
+   .desc    — clamped to 2 lines via -webkit-box; overflow: hidden clips excess
+   .ratingRow   — star + numeric rating + review count in a row
+   .ratingNum   — bold txt2 numeric score (e.g. "4.2")
+   .reviewCount — muted txt4 parenthetical count (e.g. "(18)")
+   ──────────────────────────────────────────────────────────────── */
 .body { padding:0.9rem 1rem; flex:1; display:flex; flex-direction:column; gap:0.3rem; }
 .catRow { display:flex; align-items:center; gap:0.35rem; }
 .catName { font-size:0.7rem; font-weight:600; color:var(--txt3); text-transform:uppercase; letter-spacing:0.4px; }
@@ -20,6 +67,12 @@
 .ratingRow { display:flex; align-items:center; gap:0.3rem; margin-top:0.2rem; }
 .ratingNum { font-size:0.79rem; font-weight:600; color:var(--txt2); }
 .reviewCount { font-size:0.7rem; color:var(--txt4); }
+
+/* ── Card Footer ─────────────────────────────────────────────────
+   .footer  — flex row; price on left, "Add to Plan" button on right
+   .planBtn — pill button; teal hover state (matches the planner colour)
+              base style inherits from the global .btn-sm utility class
+   ──────────────────────────────────────────────────────────────── */
 .footer { display:flex; align-items:center; justify-content:space-between; margin-top:0.5rem; }
 .planBtn { background:var(--bg3); border:1px solid var(--brd2); color:var(--txt3); border-radius:100px; }
 .planBtn:hover { background:var(--teal3); color:var(--teal); border-color:rgba(29,184,122,0.3); }
