@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════════════════════════
+   User.module.css — Shared Styles for All User Dashboard Pages
+   ═══════════════════════════════════════════════════════════════
+   Used by: UserDashboard, UserProfile, SavedPlansPage,
+            FavoritesPage, BookingsPage, PlanDetailPage.
+   Provides: page shell, welcome header, stat cards, dashboard grid,
+             profile layout, plan detail layout, and plan stop list.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   .page — 2rem top / 4rem bottom padding inside the .container wrapper
+   ──────────────────────────────────────────────────────────────── */
+.page { padding: 2rem 0 4rem; }
+
+/* ── Welcome Header ──────────────────────────────────────────────
+   Shown at the top of UserDashboard.jsx:
+   .welcome       — flex row: avatar+greeting on the left, action buttons on the right
+   .welcomeLeft   — flex row with the avatar circle and the text block
+   .avatar        — 56px gold-tinted initials circle (Cormorant serif initial)
+   .welcomeTitle  — large greeting "Welcome back, {name}" with gold italic name
+   .welcomeSub    — muted membership/join date line below the name
+   .welcomeActions — flex row of "My Profile" + "Explore" CTA buttons
+   ──────────────────────────────────────────────────────────────── */
+.welcome { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.welcomeLeft { display: flex; align-items: center; gap: 1rem; }
+.avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--gold4); border: 2px solid var(--gold3); color: var(--gold2); font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.welcomeTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--txt); }
+.welcomeTitle em { color: var(--gold); font-style: italic; }
+.welcomeSub { font-size: 0.875rem; color: var(--txt3); margin-top: 2px; }
+.welcomeActions { display: flex; gap: 0.75rem; }
+
+/* ── Stats Grid ──────────────────────────────────────────────────
+   .statsGrid — 4-column equal grid of summary stat cards
+                responsive: collapses to 2×2 at 768px (see @media)
+   .statCard  — bg2 card; gold3 border on hover to draw attention
+   .statIcon  — large emoji icon representing the stat category
+   .statNum   — Cormorant Garamond gold number (e.g. "3 Bookings")
+   .statLabel — tiny uppercase muted label beneath the number
+   ──────────────────────────────────────────────────────────────── */
+.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.statCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.25rem; text-align: center; transition: all 0.15s; }
+.statCard:hover { border-color: var(--gold3); }
+.statIcon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.statNum { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
+.statLabel { font-size: 0.75rem; color: var(--txt3); font-weight: 500; }
+
+/* ── Dashboard Grid ──────────────────────────────────────────────
+   .dashGrid  — 2-column equal grid: recent plans on the left, quick links on the right
+   .cardHd    — flex row with card title + "View All" link in a row
+   .cardTitle — Cormorant serif card heading
+   .viewAll   — small gold3 link; gold on hover
+   ──────────────────────────────────────────────────────────────── */
+.dashGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.cardHd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.cardTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--txt); }
+.viewAll { font-size: 0.78rem; color: var(--gold3); }
+.viewAll:hover { color: var(--gold); }
+
+/* ── Plan List Items ─────────────────────────────────────────────
+   Used in the "Recent Plans" card on UserDashboard.
+   .planItem       — flex row with name, meta, and status badge; bottom border separator
+   .planName       — flex: 1 expands to fill available width
+   .planMeta       — muted date/place-count; white-space: nowrap prevents wrapping
+   .planStatus     — flex-shrink: 0 keeps the badge from squishing
+   ──────────────────────────────────────────────────────────────── */
+.planItem { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--brd); transition: all 0.12s; }
+.planItem:last-child { border: none; }
+.planItem:hover { opacity: 0.8; }
+.planName { flex: 1; font-size: 0.875rem; font-weight: 500; color: var(--txt); }
+.planMeta { font-size: 0.75rem; color: var(--txt4); white-space: nowrap; }
+.planStatus { flex-shrink: 0; }
+
+/* ── Quick Links ─────────────────────────────────────────────────
+   Used in the "Quick Links" card on UserDashboard (right column).
+   .quickLinks — flex column of links with 3px gap
+   .quickLink  — flex row: icon + label + right arrow; bg3 on hover
+   .quickIcon  — 22px-wide centred emoji column
+   .arrow      — margin-left: auto pushes it to the far right
+   ──────────────────────────────────────────────────────────────── */
+.quickLinks { display: flex; flex-direction: column; gap: 3px; }
+.quickLink { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.5rem; border-radius: var(--radius); font-size: 0.875rem; color: var(--txt2); transition: all 0.12s; }
+.quickLink:hover { background: var(--bg3); color: var(--txt); }
+.quickIcon { font-size: 1rem; width: 22px; text-align: center; }
+.arrow { margin-left: auto; color: var(--txt4); }
+
+/* ── Page Title & Divider ────────────────────────────────────────
+   Used on sub-pages (SavedPlansPage, FavoritesPage, BookingsPage).
+   .pageTitle — 2rem Cormorant serif heading
+   .goldDiv   — 2px × 50px gold horizontal rule below the title
+   ──────────────────────────────────────────────────────────────── */
+.pageTitle { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--txt); margin-bottom: 0.5rem; }
+.goldDiv { height: 2px; width: 50px; background: var(--gold); margin-bottom: 1.5rem; }
+
+/* ── Profile Page Layout ─────────────────────────────────────────
+   .profileGrid   — 280px sidebar card + flex-1 form panel
+   .profileCard   — centred text card with avatar, name, email, stats
+   .profileName   — serif user name below the large avatar
+   .profileEmail  — muted email address
+   .profileStats  — evenly-spaced bookings/plans/favourites mini stats
+   .pstatN        — large gold Cormorant number (e.g. "5")
+   .pstatL        — tiny txt3 label ("Bookings", "Plans", "Saved")
+   ──────────────────────────────────────────────────────────────── */
+.profileGrid { display: grid; grid-template-columns: 280px 1fr; gap: 2rem; }
+.profileCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+.profileName { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--txt); margin-top: 1rem; margin-bottom: 4px; }
+.profileEmail { font-size: 0.85rem; color: var(--txt3); margin-bottom: 1.25rem; }
+.profileStats { display: flex; justify-content: space-around; border-top: 1px solid var(--brd); padding-top: 1.25rem; }
+.pstatN { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+.pstatL { font-size: 0.7rem; color: var(--txt3); }
+
+/* ── Plan Detail Layout ──────────────────────────────────────────
+   Used by PlanDetailPage to show the full itinerary of a saved plan.
+   .planHeader       — spacing above the plan title + meta block
+   .planDetailLayout — 2-column: itinerary list (1fr) + summary sidebar (300px)
+   .planDetailLeft   — flex column; no extra styling needed (default flow)
+   .planDetailRight  — flex column with 1rem gap between summary cards
+   ──────────────────────────────────────────────────────────────── */
+.planHeader { margin-bottom: 2rem; }
+.planDetailLayout { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
+.planDetailLeft {}
+.planDetailRight { display: flex; flex-direction: column; gap: 1rem; }
+
+/* ── Plan Stop List ──────────────────────────────────────────────
+   .planStopList — vertical list of place stops with 1rem gap
+   .planStop     — flex row: numbered circle + thumbnail + info block
+   .stopNum      — 32px gold-tinted circle with the stop index (1-based)
+   .stopImg      — 80×70px rounded thumbnail
+   .stopInfo     — flex: 1 expands to fill remaining width
+   .stopName     — serif place name
+   .stopMeta     — muted comma-separated arrival time / notes line
+   .stopArrow    — centred "↓" connector between consecutive stops
+   ──────────────────────────────────────────────────────────────── */
+.planStopList { display: flex; flex-direction: column; gap: 1rem; }
+.planStop { display: flex; gap: 1rem; background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1rem; align-items: flex-start; }
+.stopNum { width: 32px; height: 32px; border-radius: 50%; background: var(--gold4); border: 1px solid var(--gold3); color: var(--gold2); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stopImg { width: 80px; height: 70px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+.stopInfo { flex: 1; }
+.stopName { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--txt); margin-bottom: 4px; }
+.stopMeta { font-size: 0.8rem; color: var(--txt3); }
+.stopArrow { text-align: center; color: var(--txt4); font-size: 0.85rem; margin: 0.25rem 0 0.25rem 16px; }
+
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   1024px — profileGrid collapses to 1-column; planDetailLayout collapses to 1-column
+   768px  — statsGrid reflows from 4×1 to 2×2; dashGrid collapses to 1-column
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) { .profileGrid { grid-template-columns: 1fr; } .planDetailLayout { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .statsGrid { grid-template-columns: 1fr 1fr; } .dashGrid { grid-template-columns: 1fr; } }
