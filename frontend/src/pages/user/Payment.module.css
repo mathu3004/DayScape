@@ -1,0 +1,99 @@
+/* ═══════════════════════════════════════════════════════════════
+   Payment.module.css — Payment / Checkout Page Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by PaymentPage.jsx at /user/payment.
+   Shows a multi-step progress indicator, card details form,
+   and a sticky order summary sidebar.
+   No real payment processing — simulated card entry for demo.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   Standard 2rem top / 4rem bottom padding within the .container.
+   ──────────────────────────────────────────────────────────────── */
+.page { padding: 2rem 0 4rem; }
+
+/* ── Step Progress Indicator ─────────────────────────────────────
+   Horizontal step bar at the top of the page showing:
+     Step 1: Cart → Step 2: Details → Step 3: Confirm
+
+   .steps   — flex row centred horizontally; 2.5rem bottom margin
+   .step    — flex row: numbered circle + label; txt3 default colour
+   .stepOn  — applied to the current active step; gold2 colour
+   .stepN   — 28px circle for the step number; bg3 + brd2 border default
+               gold bg + bg0 text when active (.stepOn .stepN)
+   .stepL   — step label text next to the circle
+   .stepLine — 56px horizontal connector line between steps; brd2 colour
+   ──────────────────────────────────────────────────────────────── */
+.steps { display: flex; align-items: center; justify-content: center; margin-bottom: 2.5rem; }
+.step { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--txt3); font-weight: 500; }
+.stepOn { color: var(--gold2); }
+.stepN { width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--brd2); color: var(--txt3); font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.stepOn .stepN { background: var(--gold); border-color: var(--gold); color: var(--bg0); }
+.stepL { font-size: 0.82rem; }
+.stepLine { width: 56px; height: 1px; background: var(--brd2); margin: 0 0.5rem; flex-shrink: 0; }
+
+/* ── Two-Column Layout ───────────────────────────────────────────
+   .layout — 1fr form area + 320px sticky summary sidebar
+   ──────────────────────────────────────────────────────────────── */
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
+
+/* ── Payment Form ────────────────────────────────────────────────
+   .formTitle  — Cormorant serif section heading ("Payment Details")
+   .secureNote — teal-tinted info bar at the top of the form (SSL/secure badge)
+                 teal border + teal colour + teal3 background
+   .inputErr   — applied to invalid form inputs; coral border + faint coral bg
+   .err        — validation error message below an invalid field
+                 coral text + ⚠ pseudo-element prepended via ::before
+   ──────────────────────────────────────────────────────────────── */
+.formTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--txt); margin-bottom: 1.5rem; }
+.secureNote { background: var(--teal3); border: 1px solid rgba(29,184,122,0.2); border-radius: var(--radius); padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--teal); margin-bottom: 1.5rem; line-height: 1.5; }
+.inputErr { border-color: var(--coral) !important; background: rgba(224,92,78,0.05) !important; }
+.err { color: var(--coral); font-size: 0.78rem; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.35rem; }
+.err::before { content: '⚠'; font-size: 0.72rem; }
+
+/* ── Card Number Field ───────────────────────────────────────────
+   .cardNumWrap — relative wrapper around the card number input
+   .brandLabel  — absolute-positioned card brand label (VISA, MASTERCARD)
+                  detected from the first digit; right side of the input
+                  pointer-events: none so clicks fall through to the input
+   ──────────────────────────────────────────────────────────────── */
+.cardNumWrap { position: relative; }
+.brandLabel { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 0.72rem; font-weight: 700; color: var(--gold3); background: var(--bg3); padding: 2px 6px; border-radius: 4px; pointer-events: none; }
+
+/* ── Total Summary Box ───────────────────────────────────────────
+   .totalBox   — bg3 card below the form showing itemised total
+   .totalRow   — flex row: label left, value right (0.35rem padding each)
+   .totalFinal — bold border-top separated final line ("Total: LKR X")
+   ──────────────────────────────────────────────────────────────── */
+.totalBox { background: var(--bg3); border-radius: var(--radius); padding: 1rem 1.1rem; margin-top: 1rem; }
+.totalRow { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--txt2); padding: 0.35rem 0; }
+.totalFinal { font-size: 1rem; font-weight: 700; color: var(--txt); border-top: 1px solid var(--brd2); padding-top: 0.75rem; margin-top: 0.35rem; }
+
+/* ── Sidebar / Order Summary ─────────────────────────────────────
+   .sidebar     — position: sticky at 90px; shows booking details
+   .pkgImg      — negative margin bleeds the image to card edges (full-bleed header image)
+                  border-radius top only (matches card corners)
+   .pkgName     — serif package/plan name heading
+   .includeList — list of what's included in the booking
+   .priceDisplay — flex row: per-person label left, total right; separated by top border
+   ──────────────────────────────────────────────────────────────── */
+.sidebar { position: sticky; top: 90px; }
+.pkgImg { height: 160px; margin: -1.5rem -1.5rem 1rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden; }
+.pkgName { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--txt); margin-bottom: 0.5rem; }
+.includeList { margin-bottom: 1rem; }
+.priceDisplay { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--brd); padding-top: 0.75rem; }
+
+/* ── CVV Toggle ──────────────────────────────────────────────────
+   .cvvWrap    — relative wrapper around the CVV input
+   .cvvToggle  — absolute eye icon button; shows/hides CVV like a password
+                 mirrors the pwToggle pattern in Auth.module.css
+   ──────────────────────────────────────────────────────────────── */
+.cvvWrap { position: relative; }
+.cvvToggle { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--txt3); padding: 0; display: flex; align-items: center; line-height: 1; }
+.cvvToggle:hover { color: var(--txt); }
+
+/* ── Responsive Breakpoint ───────────────────────────────────────
+   900px — two-column layout collapses; sidebar moves to the top
+           (order: -1) so the user sees the booking summary first
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { order: -1; position: static; } }
