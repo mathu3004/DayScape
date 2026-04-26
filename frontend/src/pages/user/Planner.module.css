@@ -1,0 +1,115 @@
+/* ═══════════════════════════════════════════════════════════════
+   Planner.module.css — Trip Planner / Itinerary Builder Styles
+   ═══════════════════════════════════════════════════════════════
+   Used by PlannerPage.jsx at /user/planner.
+   Layout: 300px sticky place-picker sidebar (left) + builder canvas (right).
+   The picker is pre-populated from sessionStorage key 'plannerPlaces'
+   if the user arrived via "Add to Plan" from PlaceCard or PlaceDetailPage.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   Standard 2rem top / 4rem bottom padding within the .container.
+   ──────────────────────────────────────────────────────────────── */
+.page { padding: 2rem 0 4rem; }
+
+/* ── Page Header ─────────────────────────────────────────────────
+   .header        — flex row: title+sub left, action buttons right
+   .title         — Cormorant serif page heading
+   .headerActions — flex row of "Clear" and "Save Plan" buttons
+   ──────────────────────────────────────────────────────────────── */
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--txt); }
+.headerActions { display: flex; gap: 0.75rem; }
+
+/* ── Two-Column Layout ───────────────────────────────────────────
+   .layout — 300px place picker + 1fr builder canvas
+   ──────────────────────────────────────────────────────────────── */
+.layout { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+
+/* ── Place Picker (Left Sidebar) ─────────────────────────────────
+   .picker       — bg2 card; position: sticky at 90px; max-height constrains
+                   it to the visible viewport; flex column for internal scroll
+   .pickerHeader — tiny uppercase section label above the list
+   .pickList     — overflow-y: auto scrollable list of available places
+   .pickItem     — flex row: category emoji + name/distance; bg3 on hover
+   .pickIcon     — emoji for the place's category
+   .pickInfo     — flex column: name (truncated) + muted meta line
+   .pickName     — white-space: nowrap + text-overflow: ellipsis for long names
+   .pickMeta     — distance + category in txt3
+   ──────────────────────────────────────────────────────────────── */
+.picker { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1rem; position: sticky; top: 90px; max-height: calc(100vh - 120px); overflow: hidden; display: flex; flex-direction: column; }
+.pickerHeader { font-size: 0.72rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
+.pickList { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
+.pickItem { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.5rem; border-radius: var(--radius); border: 1px solid transparent; transition: all 0.12s; }
+.pickItem:hover { background: var(--bg3); border-color: var(--brd); }
+.pickIcon { font-size: 1.25rem; flex-shrink: 0; }
+.pickInfo { flex: 1; min-width: 0; }
+.pickName { font-size: 0.82rem; font-weight: 600; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pickMeta { font-size: 0.72rem; color: var(--txt3); }
+
+/* ── Builder Canvas (Right Column) ──────────────────────────────
+   .builder — flex column with 1rem gap between the plan meta row,
+              summary bar, and itinerary list
+   .planMeta — flex row of plan name + date input fields
+   ──────────────────────────────────────────────────────────────── */
+.builder { display: flex; flex-direction: column; gap: 1rem; }
+.planMeta { display: flex; gap: 1rem; }
+
+/* ── Summary Bar ─────────────────────────────────────────────────
+   .summaryBar — bg2 card at the top of the builder showing totals
+                 flex row with vertical dividers between stats
+   .sumItem    — flex column centred: number above, label below
+   .sumN       — Cormorant serif gold number (stops count, total cost)
+   .sumL       — tiny uppercase txt3 label
+   .sumDiv     — 1px × 36px vertical brd2 separator
+   ──────────────────────────────────────────────────────────────── */
+.summaryBar { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1rem 1.5rem; display: flex; align-items: center; gap: 2rem; }
+.sumItem { display: flex; flex-direction: column; align-items: center; }
+.sumN { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+.sumL { font-size: 0.72rem; color: var(--txt3); text-transform: uppercase; letter-spacing: 0.4px; }
+.sumDiv { width: 1px; height: 36px; background: var(--brd2); }
+
+/* ── Itinerary List ──────────────────────────────────────────────
+   .itinHeader  — "YOUR ITINERARY" uppercase label above the stop list
+   .itinList    — flex column of stop rows; no gap (border-bottom divides)
+   .itinStop    — flex row: numbered circle + thumbnail + info + action buttons
+   .itinNum     — 28px gold circle with the stop's 1-based index
+   .itinImg     — 70×60px rounded thumbnail
+   .itinInfo    — flex: 1 info block; min-width: 0 prevents overflow
+   .itinName    — bold place name
+   .itinMeta    — muted distance + arrival time
+   .itinNote    — inline textarea for stop-level notes; gold3 focus border
+   .itinActions — flex column of move up/down + remove buttons
+   .moveBtn     — compact reorder button; bg4 on hover; disabled when at boundary
+   .removeBtn   — compact remove button; coral hover state
+   .itinArrow   — centred "↓" connector text between stops (indented to align with info)
+   ──────────────────────────────────────────────────────────────── */
+.itinHeader { font-size: 0.72rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+.itinList { display: flex; flex-direction: column; }
+.itinStop { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; }
+.itinNum { width: 28px; height: 28px; border-radius: 50%; background: var(--gold4); border: 1px solid var(--gold3); color: var(--gold2); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.itinImg { width: 70px; height: 60px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+.itinInfo { flex: 1; min-width: 0; }
+.itinName { font-size: 0.9rem; font-weight: 600; color: var(--txt); margin-bottom: 2px; }
+.itinMeta { font-size: 0.75rem; color: var(--txt3); margin-bottom: 0.35rem; }
+.itinNote { width: 100%; padding: 5px 8px; border: 1px solid var(--brd); border-radius: 6px; background: var(--bg3); color: var(--txt2); font-size: 0.78rem; font-family: 'DM Sans', sans-serif; outline: none; }
+.itinNote:focus { border-color: var(--gold3); }
+.itinActions { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.moveBtn { padding: 4px 8px; border-radius: 5px; border: 1px solid var(--brd); background: none; color: var(--txt3); font-size: 0.75rem; cursor: pointer; transition: all 0.12s; }
+.moveBtn:hover:not(:disabled) { background: var(--bg4); color: var(--txt); }
+.moveBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+.removeBtn { padding: 4px 8px; border-radius: 5px; border: 1px solid transparent; background: none; color: var(--txt4); font-size: 0.75rem; cursor: pointer; transition: all 0.12s; }
+.removeBtn:hover { color: var(--coral); border-color: var(--coral); background: var(--coral2); }
+.itinArrow { text-align: center; color: var(--txt4); font-size: 0.78rem; padding: 0.2rem 0 0.2rem 40px; }
+
+/* ── Save Row ────────────────────────────────────────────────────
+   .saveRow — flex row of "Save Plan" + "Book Now" buttons at the bottom
+              flex-wrap allows stacking on narrow canvases
+   ──────────────────────────────────────────────────────────────── */
+.saveRow { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* ── Responsive Breakpoint ───────────────────────────────────────
+   900px — two-column layout collapses; place picker becomes a
+           fixed-height 350px horizontal scrollable section
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .picker { position: static; max-height: 350px; } }
