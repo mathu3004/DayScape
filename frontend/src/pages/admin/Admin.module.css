@@ -1,0 +1,145 @@
+/* ═══════════════════════════════════════════════════════════════
+   Admin.module.css — Shared Styles for All Admin Panel Pages
+   ═══════════════════════════════════════════════════════════════
+   Used by: AdminDashboard, AdminPlaces, AdminUsers, AdminPackages,
+            AdminReviews, AdminBookings, AdminCategories.
+   Provides: page layout, stat cards, bar chart, data table,
+             form panel, search bar, and responsive breakpoints.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ──────────────────────────────────────────────────
+   .page — wraps the entire admin page content in a flex column
+           with 1.5rem gap between each major section block
+   .pageHeader — top margin buffer above the page title
+   .pageTitle  — Cormorant Garamond heading for each admin page
+   .pageSub    — muted subtitle (e.g. "12 total · LKR X confirmed")
+   ──────────────────────────────────────────────────────────────── */
+.page { display: flex; flex-direction: column; gap: 1.5rem; }
+.pageHeader { margin-bottom: 0.5rem; }
+.pageTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--txt); margin-bottom: 2px; }
+.pageSub { font-size: 0.875rem; color: var(--txt3); }
+
+/* ── Dashboard Stat Cards ────────────────────────────────────────
+   .statsGrid — 4-column equal-width grid for the 8 stat cards
+                responsive: 1×1 on mobile, 2×4 on tablet (see @media)
+   .statCard  — bg2 card with hover border highlight; flex column
+   .statIcon  — large emoji icon at the top of each card
+   .statVal   — Cormorant Garamond number (1.6rem, bold, line-height 1)
+   .statLabel — tiny uppercase muted label below the number
+
+   Colour variants (.stat-*) override .statVal colour:
+     gold   → var(--gold)     (bookings, revenue)
+     teal   → var(--teal)     (confirmed bookings)
+     blue   → var(--blue)     (users, places)
+     coral  → var(--coral)    (cancelled)
+     purple → #a89ee8         (plans)
+     green  → #4caf50         (active)
+   ──────────────────────────────────────────────────────────────── */
+.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.statCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color 0.15s; }
+.statCard:hover { border-color: var(--brd2); }
+.statIcon { font-size: 1.35rem; }
+.statVal { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.statLabel { font-size: 0.72rem; color: var(--txt3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.stat-gold .statVal { color: var(--gold); }
+.stat-teal .statVal { color: var(--teal); }
+.stat-blue .statVal { color: var(--blue); }
+.stat-coral .statVal { color: var(--coral); }
+.stat-purple .statVal { color: #a89ee8; }
+.stat-green .statVal { color: #4caf50; }
+
+/* ── Dashboard Layout Grid ───────────────────────────────────────
+   .dashGrid — 2-column equal grid used on the dashboard page to
+               place the revenue bar chart and recent activity side by side
+   ──────────────────────────────────────────────────────────────── */
+.dashGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+/* ── Admin Card (generic content container) ──────────────────────
+   .adminCard  — bg2 surface with brd border and radius-lg corners
+                 used for tables, charts, and info panels
+   .cardTitle  — Cormorant Garamond heading inside an admin card
+   ──────────────────────────────────────────────────────────────── */
+.adminCard { background: var(--bg2); border: 1px solid var(--brd); border-radius: var(--radius-lg); padding: 1.25rem; }
+.cardTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--txt); margin-bottom: 1rem; }
+
+/* ── Revenue Bar Chart ───────────────────────────────────────────
+   .barChart — flex row, align-items: flex-end so bars grow upward
+               height 140px provides a fixed chart canvas height
+               padding-top: 1.5rem leaves room for value labels above bars
+   .barCol   — individual column: flex column, full height, bottom-aligned
+   .bar      — the coloured bar itself: gold4 fill, gold3 border,
+               min-height 4px prevents zero-value bars from disappearing
+               height is set inline as a percentage via style={{ height }}
+   .barVal   — tiny value label above each bar (e.g. "1.2k")
+   .barLabel — month abbreviation label below each bar (e.g. "Jan")
+   ──────────────────────────────────────────────────────────────── */
+.barChart { display: flex; align-items: flex-end; gap: 0.5rem; height: 140px; padding-top: 1.5rem; position: relative; }
+.barCol { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; background: var(--gold4); border: 1px solid var(--gold3); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+.barVal { font-size: 0.65rem; color: var(--txt3); }
+.barLabel { font-size: 0.65rem; color: var(--txt4); }
+
+/* ── Data Table ──────────────────────────────────────────────────
+   .table    — full-width, no cell spacing; used in all admin list views
+   .table th — tiny uppercase label headers with bottom border only
+   .table td — compact cells with bottom divider; last row has no border
+   .table tr:hover — subtle bg3 fill + txt colour boost on row hover
+
+   .userCell  — flex row with a mini avatar + name + email layout
+   .miniAvatar — 26px gold-tinted circle with the user's first initial
+   ──────────────────────────────────────────────────────────────── */
+.table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.table th { text-align: left; padding: 0.5rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--brd); }
+.table td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--brd); color: var(--txt2); vertical-align: middle; }
+.table tr:last-child td { border: none; }
+.table tr:hover td { background: var(--bg3); color: var(--txt); }
+.userCell { display: flex; align-items: center; gap: 0.5rem; color: var(--txt); font-weight: 500; }
+.miniAvatar { width: 26px; height: 26px; border-radius: 50%; background: var(--gold4); color: var(--gold2); font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* ── Quick Action Links ──────────────────────────────────────────
+   Compact navigation items in the AdminDashboard quick-links sidebar.
+   .quickAction       — flex row with icon + label; hover shows bg3
+   ──────────────────────────────────────────────────────────────── */
+.quickAction { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: var(--radius); font-size: 0.875rem; color: var(--txt2); transition: all 0.12s; }
+.quickAction:hover { background: var(--bg3); color: var(--txt); }
+
+/* ── Shared Admin Page Layout ────────────────────────────────────
+   Used by all CRUD admin pages (Places, Users, Packages, Reviews, Bookings, Categories).
+
+   .adminPageLayout — flex column with 1.25rem gap between sections
+   .topBar          — flex row: action button on left, search on right
+                      flex-wrap handles mobile stacking
+   .searchBar       — additional grouped filter controls (used in AdminPlaces)
+   .searchInput     — styled text input for client-side search filtering;
+                      min-width 220px prevents it from collapsing on mobile
+   ──────────────────────────────────────────────────────────────── */
+/* Shared admin page layout */
+.adminPageLayout { display: flex; flex-direction: column; gap: 1.25rem; }
+.topBar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.searchBar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.searchInput { padding: 0.6rem 1rem; border: 1px solid var(--brd2); border-radius: var(--radius); background: var(--bg3); color: var(--txt); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; outline: none; min-width: 220px; }
+.searchInput:focus { border-color: var(--gold3); }
+.searchInput::placeholder { color: var(--txt3); }
+
+/* ── Form Panel ──────────────────────────────────────────────────
+   Slide-in form panel shown when creating or editing a record.
+   Conditionally rendered via showForm state in each admin component.
+
+   .formPanel  — bg2 card with slightly stronger brd2 border
+   .formTitle  — Cormorant heading: "New Category" / "Edit Place" etc.
+   .formGrid   — 2-column grid for most form fields
+                 fields that need full width override to col-span 2 inline
+   .formRow    — flex row for Save + Cancel action buttons
+   ──────────────────────────────────────────────────────────────── */
+/* Form panel */
+.formPanel { background: var(--bg2); border: 1px solid var(--brd2); border-radius: var(--radius-lg); padding: 1.5rem; }
+.formTitle { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--txt); margin-bottom: 1.25rem; }
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.formRow { display: flex; gap: 0.75rem; margin-top: 1rem; }
+
+/* ── Responsive Breakpoints ──────────────────────────────────────
+   1200px — statsGrid stays at 4 columns (no change needed here)
+   900px  — statsGrid collapses to 2×2; dashGrid goes single column
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) { .statsGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px) { .statsGrid { grid-template-columns: 1fr 1fr; } .dashGrid { grid-template-columns: 1fr; } }
